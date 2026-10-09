@@ -4,7 +4,9 @@
 
 Este material explica cómo una radiografía se convierte en un vector, cómo se aprende una regla de clasificación y cómo comprobar si funciona sobre datos que no participaron en su construcción. Los ejemplos numéricos son **didácticos**, salvo cuando se indica explícitamente que proceden del TFC. No anticipan resultados del equipo.
 
-## 1. De inteligencia artificial a nuestro problema
+# PARTE I · Núcleo del TFI
+
+## 1. IA, ML, aprendizaje supervisado y clasificación
 
 ### Qué son IA, ML y Deep Learning
 
@@ -16,7 +18,7 @@ La inteligencia artificial estudia sistemas capaces de realizar tareas como razo
 
 En aprendizaje **supervisado** disponemos de ejemplos `(x,y)`: radiografía y etiqueta. El algoritmo aprende una función para predecir y en nuevas x. Clasificación predice una categoría; regresión predice una magnitud continua, por ejemplo un tiempo. Nuestro y es binario, no un grado de enfermedad ni una probabilidad clínica certificada.
 
-En aprendizaje **no supervisado**, el algoritmo busca estructura sin usar etiquetas objetivo: grupos, componentes o anomalías. PCA es no supervisado y puede estar dentro de un pipeline supervisado. Que no use y no lo exime de ajustarse solo con train: también aprende de la distribución de x.
+En aprendizaje **no supervisado**, el algoritmo busca estructura sin usar etiquetas objetivo: grupos, componentes o anomalías. Nuestro núcleo usa etiquetas; métodos no supervisados como PCA se explican brevemente en la parte II y no se incorporan al experimento.
 
 **Ventaja del supervisado aquí:** coincide con las etiquetas y permite evaluar aciertos/errores. **Limitación:** aprender etiquetas defectuosas puede producir un clasificador fiel al dataset pero poco útil fuera de él.
 
@@ -26,7 +28,7 @@ En aprendizaje **no supervisado**, el algoritmo busca estructura sin usar etique
 
 Un **dataset** es una colección de observaciones y su información asociada. Aquí cada fila futura del manifiesto representará una imagen, con ID, hash, fuente, clase, grupo/paciente si está disponible y partición. La unidad almacenada puede ser imagen, pero la unidad independiente puede ser paciente: varias radiografías de una persona no son observaciones intercambiables con personas nuevas.
 
-Las **features** son las variables de entrada del clasificador; el **target** es la salida que queremos aprender. Los píxeles son una representación; un histograma HOG/LBP es otra. Las clases son valores del target. Nuestra convención propuesta es `1=COVID`, `0=normal`; el anexo original usa índices `covid=0`, `no covid=1`. No copiar ese índice y luego calcular recall con positivo=1 sin verificar su significado.
+Las **features** son las variables de entrada del clasificador; el **target** es la salida que queremos aprender. Los píxeles son una representación; un vector HOG es otra. Las clases son valores del target. Nuestra convención propuesta es `1=COVID`, `0=normal`; el anexo original usa índices `covid=0`, `no covid=1`. No copiar ese índice y luego calcular recall con positivo=1 sin verificar su significado.
 
 **Cómo funciona el balanceo:** modifica el peso relativo de clases en entrenamiento, mediante pesos, submuestreo o sobremuestreo. No crea información nueva. `class_weight='balanced'` calcula pesos a partir de las frecuencias del train de cada fold. Sobremuestrear antes de particionar puede duplicar ejemplos a ambos lados. No balancear test artificialmente después de ver resultados.
 
@@ -42,7 +44,7 @@ Las **features** son las variables de entrada del clasificador; el **target** es
 
 Un **píxel** es una muestra espacial de intensidad. La **resolución** es la cantidad de filas y columnas; 299×299 no indica por sí sola calidad diagnóstica. Una imagen en **grises** tiene un canal; RGB tiene tres. Convertir a grises no borra marcas, texto ni sesgo de procedencia. La misma intensidad almacenada puede depender del equipo, exposición y procesamiento.
 
-**Textura** describe variaciones locales repetidas de intensidad. **Borde** es una transición relativamente fuerte entre intensidades. **Contraste** expresa diferencias de intensidad entre regiones. HOG enfatiza estructura de gradientes; LBP compara vecindarios. Ninguno sabe, por definición, qué es pulmón o patología.
+**Textura** describe variaciones locales repetidas de intensidad. **Borde** es una transición relativamente fuerte entre intensidades. **Contraste** expresa diferencias de intensidad entre regiones. HOG enfatiza estructura de gradientes; no sabe, por definición, qué es pulmón o patología.
 
 ### Cómo se preprocesa y por qué
 
@@ -50,7 +52,7 @@ Resize interpola una imagen para obtener tamaño fijo. Al reducir puede perderse
 
 Normalización puede significar operaciones diferentes: dividir intensidades de 8 bits por 255, normalizar un histograma para que sume uno o estandarizar features con media y desvío. **No son equivalentes.** Dividir por 255 es válido si la entrada efectivamente tiene ese rango; aplicarlo dos veces o sobre una imagen ya en [0,1] cambia la escala incorrectamente. Si se aprende una media del conjunto, se aprende únicamente en train.
 
-**Uso propuesto:** grises, tamaño inicial 128×128 y contrato de rango/tipo. Para LBP se considerará entrada entera consistente con su comparación local; pequeñas diferencias de punto flotante pueden cambiar patrones. No agregar ecualización, segmentación o filtros sin pregunta experimental y revisión en desarrollo.
+**Uso propuesto:** grises, tamaño inicial 128×128 y contrato de rango/tipo. No agregar ecualización, segmentación o filtros sin pregunta experimental y revisión en desarrollo.
 
 **Ventajas:** comparabilidad de dimensiones y costo controlado. **Limitaciones:** alteración de texturas, pérdida de detalles y persistencia de atajos. Una imagen nítida no implica una etiqueta correcta.
 
@@ -60,7 +62,7 @@ Normalización puede significar operaciones diferentes: dividir intensidades de 
 
 ### Qué es cada partición
 
-**Train** ajusta parámetros: coeficientes, umbrales de árboles, vectores soporte, medias y componentes. **Validation** compara decisiones que rodean ese ajuste: C, profundidad, descriptor o uso de PCA. **Test** estima el comportamiento final después de tomar las decisiones. No es un recurso para mejorar la configuración.
+**Train** ajusta parámetros: coeficientes, umbrales de árboles y medias del scaler. **Validation** compara decisiones que rodean ese ajuste: C, profundidad y tamaño de hojas. **Test** estima el comportamiento final después de tomar las decisiones. No es un recurso para mejorar la configuración.
 
 **Generalización** es capacidad de predecir adecuadamente en nuevos datos del dominio objetivo. No significa rendir bien ante cualquier hospital, equipo o época. Una partición aleatoria del mismo repositorio estima generalización interna, con sus límites.
 
@@ -80,7 +82,7 @@ Propuesta común: 80 % desarrollo, 20 % test; dentro del 80 %, cinco folds. En c
 
 Data leakage o fuga de información ocurre cuando la construcción del sistema utiliza información que no debería estar disponible para ese ajuste o evaluación. Puede ocurrir entre train/test, entre train/validation, por duplicados, por pacientes repetidos, por variables que codifican la respuesta o por decisiones humanas guiadas por el test.
 
-**Ejemplo didáctico de escala:** un fold train contiene intensidades medias 10 y 20; validation contiene 100. Si la media se calcula sobre los tres casos, el centro ya incorpora validation. Que no se miren etiquetas no evita la fuga. PCA, imputación y selección de variables presentan el mismo problema si se ajustan globalmente.
+**Ejemplo didáctico de escala:** un fold train contiene intensidades medias 10 y 20; validation contiene 100. Si la media se calcula sobre los tres casos, el centro ya incorpora validation. Que no se miren etiquetas no evita la fuga. Cualquier transformación que aprenda estadísticas presenta el mismo problema si se ajusta globalmente.
 
 **Ejemplo de paciente:** una radiografía en train y otra del mismo paciente en test pueden compartir anatomía, dispositivo y marcas. El algoritmo podría reconocer identidad en lugar de generalizar a pacientes nuevos. Un split estratificado por clase no resuelve esa dependencia.
 
@@ -91,11 +93,11 @@ Data leakage o fuga de información ocurre cuando la construcción del sistema u
 Contrato conceptual, **no implementación**:
 
 ```text
-fold train -> descriptor fijo -> fit scaler -> fit PCA opcional -> fit clasificador
-fold val   -> mismo descriptor -> transform scaler -> transform PCA -> predict
+fold train -> descriptor fijo -> fit scaler -> fit SVM
+fold val   -> mismo descriptor -> transform scaler -> predict SVM
 ```
 
-HOG/LBP fijos por imagen no aprenden estadísticas del conjunto y pueden cachearse de manera segura si los IDs y configuración se controlan. El cache no autoriza elegir parámetros mirando test ni reutilizar un scaler/PCA de otro fold.
+HOG fijo se calcula por imagen sin aprender estadísticas del conjunto. Reutilizar esos vectores no autoriza seleccionar decisiones mirando test ni reutilizar un scaler de otro fold. RF recibe HOG directamente.
 
 **Ventajas:** consistencia entre ajuste e inferencia, menor riesgo de errores, serialización de una unidad. **Limitaciones:** no protege contra un manifiesto incorrecto, duplicados cruzados, etiquetas mal mapeadas o selección humana tras test. La prueba futura debe verificar qué IDs recibió cada `fit`, no solo que exista un objeto llamado Pipeline.
 
@@ -107,7 +109,7 @@ K-fold divide desarrollo en k partes y repite k ajustes: cada parte valida una v
 
 **Parámetros:** k, shuffle, random_state y, cuando corresponda, groups. No improvisar más folds que grupos independientes por clase. La semilla define una partición, no una garantía científica.
 
-**Uso:** cinco folds comunes para B0, B1, C1 y C2; guardar valor por fold, media y desvío estándar muestral. Si un fold no permite calcular AUC por falta de clase, registrarlo y corregir el diseño en desarrollo; no reemplazar por cero.
+**Uso:** seed 42 y cinco folds comunes para B0, C1 y C2; guardar valor por fold, media y desvío estándar muestral. Si un fold no permite calcular AUC por falta de clase, registrarlo y corregir el diseño en desarrollo; no reemplazar por cero.
 
 **Ventajas:** usa eficientemente datos de desarrollo y muestra inestabilidad. **Limitaciones:** más costo y dependencias porque se solapan conjuntos de entrenamiento. Cinco valores no equivalen a cinco datasets independientes. CV anidada agrega una capa interna para tuning y otra externa para estimar ese proceso, con mayor costo; nuestro mínimo usa CV de selección más test reservado.
 
@@ -146,7 +148,7 @@ Esta sección es explicación pedagógica [C]. La arquitectura exacta y resultad
 
 ### Qué es y para qué sirve
 
-Histogram of Oriented Gradients resume **direcciones de cambio de intensidad** en regiones. Convierte estructura local en un vector fijo apto para SVM/logística. El procedimiento se fundamenta en [E03](https://scikit-image.org/docs/stable/auto_examples/features_detection/plot_hog.html) y sus parámetros en [E05](https://scikit-image.org/docs/stable/api/skimage.feature.html).
+Histogram of Oriented Gradients resume **direcciones de cambio de intensidad** en regiones. Convierte estructura local en un vector fijo común a SVM y Random Forest. El procedimiento se fundamenta en [E03](https://scikit-image.org/docs/stable/auto_examples/features_detection/plot_hog.html) y sus parámetros en [E05](https://scikit-image.org/docs/stable/api/skimage.feature.html).
 
 ### Cómo funciona
 
@@ -162,45 +164,21 @@ En una radiografía, contornos de costillas o márgenes del tórax generan gradi
 
 **Defensa:** calcular longitud del vector, explicar por qué normalizar por bloques y distinguir extraer features de aprender pesos del clasificador.
 
-## 9. LBP y textura
+**Alcance fijo:** no se buscarán otras resoluciones ni parámetros HOG. Compartir descriptor reduce decisiones y permite comparar los clasificadores sobre la misma representación; no garantiza que HOG conserve toda señal útil.
 
-Local Binary Pattern describe un vecindario comparando cada vecino con el píxel central: mayor o igual produce 1; menor produce 0. Una secuencia ordenada de bits codifica el patrón. Se construyen histogramas de códigos en regiones; estos describen textura. `P` controla vecinos y `R` radio. La variante `uniform` agrupa patrones por estructura de transiciones y reduce categorías ([E04](https://scikit-image.org/docs/stable/auto_examples/features_detection/plot_local_binary_pattern.html)).
-
-**Ejemplo didáctico:** alrededor de un centro de intensidad 100, vecinos mayores/menores generan un código como 11000011 según orden fijado. Rotar el orden cambia el código básico; la variante elegida determina qué invariancias se buscan. No interpretar el entero como intensidad o gravedad.
-
-**Uso propuesto [C]:** P=8, R=1, `uniform`; histogramas normalizados en 4×4 regiones espaciales. Diez bins por región dan 160 features. Un histograma global sería más pequeño pero perdería ubicación. Concatenar regiones conserva una localización gruesa. No entrenar RF con el valor de código por píxel sin definir representación.
-
-**Ventajas:** compacto, económico y complementario a bordes. **Limitaciones:** ruido cambia comparaciones; la agregación pierde detalles y no segmenta pulmones. Los parámetros son hiperparámetros si se comparan, por lo que solo se eligen en desarrollo.
-
-**Defensa:** explicar comparación binaria, histograma y diferencia con HOG. Una característica de textura no es una etiqueta médica interpretable por sí sola.
-
-## 10. Scaling y StandardScaler
+## 9. Scaling y StandardScaler
 
 StandardScaler aprende por feature la media μ y escala σ del train, y transforma `z=(x−μ)/σ`. Guarda esos valores para validation/test; no vuelve a estimarlos. Reduce el dominio de columnas con escalas grandes sobre distancias, márgenes y regularización. Un feature constante requiere tratamiento definido por biblioteca, no división manual por cero. Véase [E14](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html).
 
 **Ejemplo didáctico:** si una variable varía entre 0 y 1000 y otra entre 0 y 1, distancia euclídea sin escala estará dominada por la primera. Aun con HOG normalizado por bloques, columnas pueden tener distinta variabilidad; evaluamos un pipeline con escalado consistente.
 
-**Uso:** SVM, logística y KNN; PCA se aplicaría después de scaler. RF usa umbrales ordenados y no requiere escalado por ese motivo. Estandarizar histograma LBP para KNN no es lo mismo que normalizarlo para sumar uno.
+**Uso:** solo C1 necesita StandardScaler en su Pipeline. RF trabaja directamente con HOG: sus reglas por umbral no requieren escalado. La normalización L2-Hys de bloques y la estandarización por columnas son operaciones distintas.
 
 **Ventajas:** facilita ajustes y hace regularización comparable por escala. **Limitaciones:** sensibilidad a outliers; puede aumentar peso de columnas con poca varianza y no elimina correlación. Nunca ajustar con test.
 
 **Defensa:** explicar qué parámetros aprende el scaler y dónde se guarda, aunque el modelo final sea “solo un SVM”.
 
-## 11. PCA y reducción de dimensionalidad
-
-PCA encuentra direcciones ortogonales que concentran varianza de las features centradas. Proyecta cada vector sobre componentes y conserva menos coordenadas. Se calcula a partir de una descomposición matricial; **no necesita ni optimiza etiquetas**. La varianza explicada indica proporción de variabilidad de entrada conservada, no porcentaje de accuracy ni de información clínica. Referencia [E10](https://scikit-learn.org/stable/modules/decomposition.html#pca).
-
-**Ejemplo didáctico:** dos features de bordes muy correlacionadas pueden resumirse con una dirección común. Pero un detalle de poca varianza podría separar clases: eliminarlo puede empeorar clasificación.
-
-**Uso propuesto [C]:** ablación HOG→scaler→PCA(95 % varianza)→SVM frente a la misma ruta sin PCA. El número efectivo de componentes se aprende dentro de cada fold y puede diferir. Debe ser compatible con rango de la matriz y solver; una fracción de varianza no es intercambiable con un número fijo al elegir solver.
-
-**Parámetros:** n_components, solver, whiten y semilla si el algoritmo es aleatorio. Comenzar sin whitening; probarlo sin justificación agrega otra decisión y costo.
-
-**Ventajas:** puede comprimir correlación y acelerar clasificador. **Limitaciones:** PCA cuesta tiempo/memoria, puede perder señal y combina features; baja interpretabilidad de componentes. No ajustarlo sobre todo desarrollo antes de CV ni sobre test aunque no use etiquetas.
-
-**Defensa:** diferenciar selección de variables de proyección, explicar 95 % de varianza y reconocer que PCA no garantiza mejor generalización.
-
-## 12. SVM lineal y RBF
+## 10. SVM lineal
 
 ### Qué es y cómo funciona
 
@@ -208,53 +186,41 @@ Support Vector Machine busca una frontera con margen amplio entre clases. En el 
 
 **C** grande penaliza más violaciones del margen y debilita regularización relativa; C pequeño favorece margen más regularizado. No significa que C grande siempre mejore.
 
-Un **kernel** calcula similitud equivalente a un producto en otro espacio. RBF usa `exp(−gamma ||x−x'||²)`; gamma alto implica influencia más local y puede producir fronteras complejas. Lineal no usa gamma. El escalado cambia distancias y, por lo tanto, el efecto del kernel.
+
 
 ### Uso, ventajas y límites [C]
 
-HOG produce muchos atributos y una SVM lineal brinda una prueba inicial razonable de separación con margen. Su inferencia depende de productos con coeficientes; RBF depende de vectores soporte y puede ser mucho más costosa al crecer n. No anunciar ahorro hasta medir extracción más clasificador.
+HOG produce muchos atributos y una SVM lineal brinda una prueba inicial razonable de separación con margen. Su inferencia depende de productos con coeficientes: aproximadamente O(d) para d atributos; aquí d=8100. El ajuste depende de n, d, solver y convergencia. No anunciar ahorro hasta medir extracción más clasificador.
 
 Score de `decision_function` no es probabilidad, pero sirve para ranking ROC/PR. Activar estimación probabilística en una SVM puede agregar calibración y costo; no es necesario para AUC. Se debe registrar qué signo corresponde a COVID.
 
-**Defensa:** dibujar mentalmente frontera y margen; explicar parámetro aprendido w frente a hiperparámetro C; justificar lineal primero y RBF solo como alternativa controlada.
+**Defensa:** dibujar mentalmente frontera y margen; explicar parámetro aprendido w frente a hiperparámetro C; justificar la frontera lineal elegida y distinguirla de las alternativas de la parte II.
 
-## 13. Random Forest
+**Implementación prevista:** LinearSVC, C inicial 1 y grilla {0.1, 1, 10}; L2 y squared_hinge. Registrar solver y tolerancias, comprobar convergencia. No habilitar kernels alternativos ni calibración como tareas adicionales.
+
+## 11. Random Forest
 
 Un árbol divide el espacio mediante reglas del tipo `feature_j ≤ umbral`. En clasificación se eligen divisiones que reducen impureza, por ejemplo Gini `1−Σ p_k²`. Un Random Forest entrena muchos árboles con muestras bootstrap y subconjuntos aleatorios de features en cada división; agrega sus predicciones. Busca reducir variación de árboles individuales. [E07](https://scikit-learn.org/stable/modules/ensemble.html).
 
 **Parámetros:** n_estimators, max_depth, min_samples_leaf, max_features, class_weight, bootstrap y random_state. Cantidad de árboles suele estabilizar promedio pero aumenta memoria/latencia; árboles muy profundos pueden memorizar. No existe una única función de pérdida global optimizada conjuntamente como en logística.
 
-**Uso propuesto [C]:** LBP compacto y no lineal como segundo candidato principal. HOG también es compatible, pero miles de atributos correlacionados elevan costo y complican interpretación. Si cambia representación entre RF y SVM, la comparación es de pipelines completos.
+**Uso propuesto [C]:** HOG compartido con SVM como segundo candidato. Las 8100 features pueden aumentar costo y correlación; se medirá el efecto sin cambiar descriptor preventivamente. Inicial: 100 árboles, profundidad sin límite y hoja mínima 1. Grilla: árboles {100,200}, profundidad {None,20}, hoja mínima {1,3}; max_features="sqrt", class_weight=None y seed 42.
 
 **Ventajas:** relaciones no lineales, pocas exigencias de escalado y flexibilidad. **Limitaciones:** un bosque no es transparente como un solo árbol; su importancia por impureza puede favorecer ciertos atributos y no prueba causalidad. Inferencia recorre muchos árboles y puede pesar más que un modelo lineal.
 
 **Defensa:** explicar bootstrap, selección aleatoria de features, ensemble y por qué regularizar hojas/profundidad.
 
-## 14. KNN
+**Costo:** cada predicción recorre un camino por árbol; aproximadamente O(T·h) con T árboles y profundidad h. Entrenamiento y tamaño dependen de árboles, nodos, ejemplos y features consideradas. Es una descripción general, no un tiempo prometido.
 
-K vecinos más cercanos guarda ejemplos y clasifica una entrada mediante las etiquetas de sus k vecinos según distancia. Puede votar uniformemente o ponderar por distancia. El aprendizaje casi no optimiza parámetros globales; buena parte del costo se desplaza a inferencia y almacenamiento. [E08](https://scikit-learn.org/stable/modules/neighbors.html).
+## 12. DummyClassifier como baseline
 
-**Parámetros:** k, weights, métrica y p de Minkowski (p=1 Manhattan, p=2 euclídea), algoritmo de búsqueda. Se requiere escala coherente; una distancia dominada por variables arbitrarias deja de representar similitud útil.
+B0 usa `strategy="most_frequent"`: aprende la clase mayoritaria del train y la predice para todas las imágenes. Ignora los valores HOG; sirve como referencia mínima para saber si los candidatos aportan información sobre las etiquetas. Se evalúa con los mismos folds y métricas.
 
-**Curse of dimensionality:** al aumentar dimensiones, cubrir el espacio requiere muchos más datos y distancias pueden perder contraste. HOG de 8100 atributos no garantiza vecinos semánticamente cercanos. Por eso la alternativa inicial es LBP más compacto; PCA sería otra decisión a validar, no una cura universal.
+En datos equilibrados su accuracy puede rondar 50 %, pero F1 macro no vale automáticamente 0,5. Si predice solo una clase, el F1 de la otra puede ser cero bajo la convención declarada. Registrar tratamiento de denominadores nulos y desempate entre frecuencias. La baseline no diagnostica y no se oculta si supera a los candidatos.
 
-**Uso [C]:** candidato opcional para entender similitud y contrastar costo de inferencia; no desplaza a C1/C2. **Ventaja:** puede mostrar ejemplos de referencia. **Limitación:** ejemplos similares pueden compartir equipo o marcas, no patología.
+**Defensa:** explicar por qué una referencia trivial es necesaria y por qué no hace falta sumar un tercer clasificador entrenable para cumplir baseline más dos candidatos.
 
-**Defensa:** explicar por qué “entrena rápido” no significa “sistema barato” y cómo k pequeño/grande modifica variación/suavidad de frontera.
-
-## 15. Regresión logística y baseline
-
-Aunque su nombre dice regresión, la regresión logística modela `P(y=1|x)` mediante una sigmoide de `w·x+b`. Al aplicar un umbral produce una **clasificación**. Ajusta coeficientes minimizando log-loss binaria más regularización, por ejemplo L2: penalizar pesos grandes limita complejidad. Su frontera en el espacio original de features es lineal; no requiere que los píxeles sigan una distribución normal. [E09](https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression).
-
-**Parámetros:** C o fuerza de regularización según API, penalización, solver, class_weight, tolerancia y max_iter. Un aviso de no convergencia no debe ocultarse. Probabilidades estimadas no están automáticamente calibradas para otra prevalencia.
-
-**Uso [C]:** B1=HOG+scaler+logística L2, referencia adicional interpretable. C1=SVM y C2=RF siguen siendo los dos candidatos principales. B0 es **DummyClassifier most_frequent**, que predice la clase más frecuente del train sin mirar la imagen. Sirve para comprobar si el sistema extrae algo útil por encima de una regla trivial.
-
-**Ejemplo didáctico:** en datos exactamente balanceados B0 tiene accuracy cercana a 50 %, pero F1 macro depende de la clase predicha y de la convención para denominadores nulos. No inventar 0,5 para todas sus métricas. ROC-AUC de scores constantes, con ambas clases presentes, representa falta de discriminación, no una buena referencia clínica.
-
-**Defensa:** justificar baseline como control y reconocer que si los candidatos no la superan hay un resultado que investigar, no algo que deba esconderse.
-
-## 16. Métricas con la clase positiva explícita
+## 13. Métricas con clase positiva explícita
 
 ### Matriz y fórmulas
 
@@ -282,7 +248,7 @@ El **F1 weighted** pondera por soporte y puede ocultar bajo desempeño minoritar
 
 Una curva **ROC** recorre umbrales y relaciona sensibilidad con tasa de falsos positivos `FP/(FP+VN)=1−especificidad`. **ROC-AUC** resume ranking: si se eligen un positivo y un negativo al azar, mide ordenación correcta considerando empates. No es porcentaje de diagnósticos correctos a un umbral.
 
-La curva **PR** relaciona precision y recall y depende de prevalencia. Es informativa cuando hay pocos positivos. “AUC-PR” puede referirse a áreas calculadas de formas distintas: el proyecto reportará **Average Precision (AP)** con nombre explícito y no la confundirá con integración trapezoidal. Usar scores continuos, no solo predicciones binarias; un modelo puede tener buen ranking y mal umbral. Fundamento de implementaciones en [E12](https://scikit-learn.org/stable/modules/model_evaluation.html).
+La curva **PR** relaciona precision y recall y depende de prevalencia. Es informativa cuando hay pocos positivos. “AUC-PR” puede referirse a áreas calculadas de formas distintas: solo si el desbalance observado justifica PR, el proyecto reportará **Average Precision (AP)** con nombre explícito y no la confundirá con integración trapezoidal. Usar scores continuos, no solo predicciones binarias; un modelo puede tener buen ranking y mal umbral. Fundamento de implementaciones en [E12](https://scikit-learn.org/stable/modules/model_evaluation.html).
 
 ### Qué debemos defender
 
@@ -290,63 +256,43 @@ F1 macro será la métrica de selección propuesta, acompañada siempre por sens
 
 TFC prueba 10: 79,47 % es accuracy test; 82,08 % es accuracy validation; 79,60 % es F1 COVID. Son métricas diferentes. El 75 % de coincidencia médico/red tampoco equivale a accuracy contra etiquetas.
 
-## 17. Hiperparámetros y optimización
+**Alcance:** matriz, accuracy, precision, recall, especificidad, F1 y F1 macro son centrales. ROC-AUC requiere scores continuos válidos y ambas clases; PR/AP requiere además una razón basada en desbalance real. No son gráficos obligatorios por defecto.
 
-Un **parámetro aprendido** surge de fit: coeficientes SVM/logística, umbrales de árboles, media del scaler o componentes PCA. Un **hiperparámetro** organiza ese aprendizaje: C, profundidad, vecinos, resolución, celdas HOG o n_components. Elegir entre extractores también es selección de modelo.
+## 14. Hiperparámetros y GridSearchCV
 
-**GridSearchCV** ensaya combinaciones de una grilla y compara por CV. **RandomizedSearchCV** toma un número definido de combinaciones de distribuciones/listas; permite controlar costo cuando rangos son grandes. No garantizan el mejor modelo imaginable, solo el mejor encontrado según protocolo. Véase [E11](https://scikit-learn.org/stable/modules/grid_search.html).
+Un parámetro surge del ajuste: pesos SVM, medias del scaler o umbrales de árboles. Un hiperparámetro configura ese aprendizaje: C, cantidad de árboles o profundidad. HOG también tiene parámetros de diseño, pero aquí se mantienen fijos para reducir decisiones.
 
-**Ejemplo de presupuesto [C]:** 4 valores de C × 2 pesos × 5 folds son 40 ajustes, no ocho. Agregar PCA duplica esa familia, más el costo de ajustar PCA en cada fold. La búsqueda base del roadmap propone 185 ajustes para SVM/PCA/RF/logística, sin opcionales. Antes de ejecutarla medir un piloto de desarrollo, estimar RAM/tiempo y fijar límites.
+GridSearchCV evalúa cada combinación de la grilla con los mismos cinco folds de desarrollo y selecciona por F1 macro medio [E11]. C1 busca C={0.1,1,10}; C2 busca n_estimators={100,200}, max_depth={None,20}, min_samples_leaf={1,3}. Son 3+8=11 configuraciones, equivalentes a 55 ajustes de CV, más los reajustes que correspondan. Esta cuenta permite estimar costo; no es una cuota a cumplir.
 
-**Uso:** scorer F1 macro y métricas secundarias, folds comunes, semillas, `cv_results_`, fallos y tiempos guardados. No eliminar una corrida por baja métrica; registrar motivos técnicos si falla. Umbral estándar salvo decisión validada exclusivamente en desarrollo.
+No se usa RandomizedSearchCV ni se amplía HOG. Se guardan resultados por fold, configuración, fallos y tiempos aproximados. StandardScaler se ajusta dentro de cada fold. En igualdad exacta entre candidatos se prefiere SVM; dentro de cada grilla se mantiene orden documentado. El umbral es el estándar del clasificador y no se ajusta mirando test.
 
-**Defensa:** explicar por qué no usar test en tuning y por qué la mejor media de búsqueda es optimista. Una prueba estadística posterior no elimina la contaminación de haber elegido viendo test.
+**Límites:** la mejor media seleccionada es potencialmente optimista; el test reservado se usa una vez después de fijar todas las decisiones. La búsqueda no garantiza óptimo universal ni confirma superioridad clínica. **Defensa:** distinguir ajuste, selección y evaluación final.
 
-## 18. Estadística para interpretar evidencia
+## 15. Media, dispersión y McNemar condicionado
 
-### Media, dispersión e incertidumbre
+La media CV es `m=Σx_i/k`; el desvío estándar muestral es `sqrt(Σ(x_i−m)²/(k−1))`, con k=5. Media ± desvío describe variación entre folds; no es un intervalo de confianza de 95 %, porque los entrenamientos se solapan. Este resumen descriptivo y el test final constituyen el plan estadístico principal.
 
-La **media** resume valores: `m=Σx_i/k`. El **desvío estándar muestral** es `sqrt(Σ(x_i−m)²/(k−1))`; cuantifica dispersión, no incertidumbre de una media bajo cualquier diseño. En CV hay entrenamiento compartido, por lo que `media ± desvío` es descriptivo y no un intervalo de confianza de 95 %.
+McNemar compara errores de dos clasificadores fijos sobre **las mismas unidades**. `b` cuenta casos donde C1 acierta y C2 falla; `c`, lo inverso. Bajo igualdad de tasas de error, las discordancias no deberían favorecer sistemáticamente a uno. La variante exacta bilateral usa una binomial con b+c ensayos y probabilidad 0,5 [E20]. Si b+c=0, no hay discordancias que sustenten diferencia.
 
-Un intervalo de confianza depende de supuestos y procedimiento de muestreo. Bootstrap remuestrea unidades; si hay varias imágenes por paciente, remuestrear pacientes conserva mejor la estructura que imágenes independientes. No produce una cohorte externa ni corrige selección sesgada del dataset.
+Su aplicación exige predicciones individuales pareadas, mismas imágenes/etiquetas y unidades razonablemente independientes. Varias imágenes de un paciente pueden romper el último supuesto. Se predefine únicamente C1 frente a C2 y α=0.05 antes de abrir test. Si los supuestos no se justifican, se informa que no corresponde. No se reconstruyen pares a partir de accuracies del PDF ni se reemplaza por otra prueba automáticamente.
 
-**Significancia:** un p-valor mide cuán incompatibles son los datos con una hipótesis nula bajo un modelo de muestreo; no es probabilidad de que un clasificador sea mejor. Un efecto pequeño puede ser significativo con mucha muestra, y uno relevante puede no serlo con poca. Reportar diferencia, intervalo y tamaño de muestra. No significativo no demuestra igualdad.
+El p-valor no es probabilidad de que un modelo sea mejor; no significativo no demuestra igualdad. Reportar n, b/c, diferencia de accuracy y p con sus límites. McNemar no contrasta F1 ni causalidad. No programar múltiples pruebas, bootstrap inferencial o nuevos entrenamientos estadísticos.
 
-### McNemar
+**Defensa:** justificar tanto la aplicación como la omisión; distinguir dispersión CV, tamaño de diferencia y significancia.
 
-Compara dos clasificadores fijos sobre las mismas unidades. Se cuentan `b`: A acierta y B falla, y `c`: A falla y B acierta. Bajo igualdad de tasas de error, las discordancias no deberían favorecer sistemáticamente uno. Con versión exacta se usa distribución binomial sobre b+c; si b+c=0 no hay evidencia de diferencia por discordancias. [E20](https://www.statsmodels.org/stable/generated/statsmodels.stats.contingency_tables.mcnemar.html).
+## 16. Interpretabilidad y análisis de errores
 
-**Ejemplo didáctico:** A y B pueden tener accuracy similar pero fallar en personas diferentes; las accuracies solas no reconstruyen b y c. McNemar no compara directamente F1, AUC o tiempo. Pares de imágenes de un mismo paciente tampoco son automáticamente independientes.
+Interpretabilidad permite examinar relaciones entre representación y decisión. Global describe qué usa el modelo; local describe un caso. Ninguna demuestra causalidad médica. Se explica el candidato elegido en 04 y se revisan FP/FN frente a aciertos sin volver a ajustar por test.
 
-**Uso [C]:** prueba bilateral final contra B0, si hay independencia y predicciones pareadas; CNN solo con evidencia comparable individual. Elegir comparaciones y α antes de test, con ajuste por multiplicidad si se agregan varias.
+Para SVM lineal, coeficientes HOG muestran dirección y magnitud condicionadas a escala y correlación. Se pueden asociar a bloques/orientaciones, pero un peso no es una lesión; bins correlacionados reparten señal. La visualización HOG es un descriptor, no importancia del clasificador.
 
-### Wilcoxon y otras pruebas pareadas
+Para RF, importancia por impureza resume reducción de impureza en sus árboles. Es una inspección del modelo entrenado, con sesgos y sin validación independiente de generalización. Permutation importance altera una feature y observa caída de métrica [E13]; puede ser útil si es comprensible y se declara el conjunto de desarrollo utilizado. Correlaciones pueden ocultar o repartir importancia; si se calcula sobre train, explicitar su optimismo. No se exige crear nuevos splits ni conservar todos los modelos CV.
 
-Wilcoxon de rangos con signo estudia diferencias pareadas, usando signos y rangos de magnitudes. Requiere justificar independencia de pares y simetría de diferencias; ceros/empates afectan variantes del cálculo. No es una solución automática por “no normalidad”. [E19](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html).
+Los ejemplos deben señalar artefactos, calidad o fuente solo cuando sean observables, sin inferir diagnóstico clínico. SHAP queda en la parte II y fuera del experimento. **Defensa:** explicar diferencia entre error, importancia y causalidad.
 
-Demšar [E17](https://jmlr.org/papers/v7/demsar06a.html) trata comparación sobre múltiples datasets; no autoriza a llamar datasets independientes a cinco folds del mismo conjunto. Dietterich [E18](https://doi.org/10.1162/089976698300017197) analiza pruebas aproximadas y propone el diseño 5×2cv para determinadas comparaciones de algoritmos. Ese diseño exige repetir entrenamiento sobre cinco divisiones bipartitas; no se puede aplicarle su fórmula a cualquier CV disponible.
+## 17. Reproducibilidad y control de versiones
 
-**Defensa:** saber cuándo **no corresponde** una prueba es parte del rigor. En esta etapa solo planificamos métodos; no calculamos p-valores ni significancia de hipótesis propias.
-
-## 19. Interpretabilidad sin prometer explicaciones clínicas
-
-Interpretabilidad consiste en comprender relaciones entre entrada, representación y decisión del modelo. Una explicación puede ser **global** (qué variables usa en general) o **local** (por qué cambió score para un ejemplo). Explicar una función matemática no prueba causalidad médica.
-
-**Coeficientes:** en modelos lineales muestran dirección y magnitud condicionadas a escala y correlación. Mapear un peso HOG a bloque/orientación ayuda a interpretar el descriptor; con PCA se requiere retroproyección. Dos variables correlacionadas pueden repartirse el peso.
-
-**Feature importance por impureza:** resume cuánto reducen impureza las variables en árboles. Puede favorecer variables con más oportunidades de división; no es evidencia independiente de generalización.
-
-**Permutation importance:** se altera el orden de una variable en datos retenidos y se mide cuánto cae una métrica. Repetir permutaciones ayuda a estudiar variabilidad; features correlacionadas pueden sustituirse, y permutar una sola puede crear combinaciones poco realistas. Preferir grupos de regiones/descriptores para este diseño. Véase [E13](https://scikit-learn.org/stable/modules/permutation_importance.html).
-
-**SHAP:** distribuye contribuciones a una predicción según un juego de referencia y supuestos de atribución; depende de la representación y del conjunto de fondo. Puede ser costoso y difícil de explicar en miles de features. No es obligatorio: solo añadirlo con una pregunta concreta no cubierta por coeficientes/permutaciones.
-
-**Uso [C]:** desarrollo retenido o predicciones fuera de fold para explicaciones; test solo para descripción final congelada. Comparar FP/FN con aciertos sin modificar pipeline después. Un mapa HOG no es una explicación del clasificador; una región importante puede contener texto del hospital.
-
-**Defensa:** distinguir importancia de causalidad, exactitud de interpretación y explicación del modelo de diagnóstico del paciente.
-
-## 20. Reproducibilidad y control de versiones
-
-Una **seed** inicializa un generador pseudoaleatorio y ayuda a repetir una secuencia. Registrar semillas de split, folds, RF, búsqueda, PCA aleatoria y bootstrap. Mismo número con distinta biblioteca/hardware no garantiza resultado idéntico. Fijar también hilos cuando se mida costo.
+Una **seed** inicializa un generador pseudoaleatorio y ayuda a repetir una secuencia. Usar seed 42 para split, folds y estimadores aleatorios. Mismo número con distinta biblioteca/hardware no garantiza resultado idéntico. Registrar hardware y condiciones generales al informar costo, sin infraestructura permanente de hilos.
 
 Un **entorno virtual venv** aísla dependencias. `requirements.txt` registra versiones probadas para instalar el entorno; no basta listar nombres sin versiones. Configuración debe separar decisiones del código y definir rutas relativas. Los resultados necesitan hash de datos, partición, configuración y commit que los produjeron.
 
@@ -356,29 +302,27 @@ Un **entorno virtual venv** aísla dependencias. `requirements.txt` registra ver
 
 **Defensa:** demostrar regeneración desde datos autorizados y entorno limpio, no solo abrir un notebook con outputs viejos.
 
-## 21. Inferencia, latencia, drift y mantenimiento
+Un manifiesto con IDs/hashes/particiones y un registro breve de configuración, commit y decisiones son suficientes. No se construye un sistema de bloqueo del test. Cada sprint deja evidencia y comandos, sin formularios operativos duplicados.
 
-**Inferencia** aplica el pipeline ya ajustado a una nueva entrada. **Latencia** es tiempo hasta obtener salida; debe especificar si incluye lectura, resize, features y carga de modelo. Medir proceso frío y caliente por separado si importa, reportar mediana/p95 y hardware. **Throughput** es cantidad de imágenes por unidad de tiempo; no equivale a latencia individual.
+## 18. Inferencia, costo y despliegue conceptual
 
-**Data drift** es cambio de distribución de entradas; por ejemplo, otro equipo radiográfico. **Concept drift** cambia la relación entre entradas y etiqueta; **model drift** suele usarse para degradación del rendimiento con el tiempo. Una distribución distinta no demuestra degradación, y medir degradación requiere etiquetas fiables.
+Inferencia aplica el modelo fijado a una entrada nueva. Su tiempo depende de lectura, resize, HOG y clasificación; informar qué incluye. Mediremos tiempos aproximados de extracción, búsqueda/entrenamiento e inferencia, tamaño del modelo y complejidad general. RAM puede anotarse si es fácil obtenerla; no requiere profiling ni telemetría.
 
-**Monitoreo conceptual:** calidad, formatos, origen y tiempos; métricas posteriores cuando haya etiquetas y permisos. **Reentrenamiento:** proceso controlado de nueva versión con datos auditados, validación y posibilidad de rollback; no reacción automática a toda alerta.
+Data drift describe cambios de distribución de entrada; concept drift, cambios de relación entre entrada y etiqueta. Una distribución distinta no prueba por sí sola degradación; evaluar rendimiento requiere etiquetas fiables. Un monitoreo hipotético observaría calidad, formatos, origen y errores cuando hubiera permisos y etiquetas. Reentrenar requeriría auditar nuevos datos y validar una nueva versión.
 
-**Uso [C]:** describir una inferencia local versionada y sus requisitos. No desplegar API, web o sistema clínico. La facilidad de serialización no resuelve validación real, seguridad ni integración sanitaria.
+Despliegue, integración, monitoreo, drift y reentrenamiento son **solo conceptuales** en el informe. No se desarrolla una API, aplicación ni servicio clínico. **Defensa:** distinguir qué medimos en el prototipo y qué faltaría para un uso real.
 
-**Defensa:** aclarar qué mediría el prototipo y qué requeriría una implementación real fuera de alcance.
-
-## 22. CRISP-ML(Q) y aseguramiento de calidad
+## 19. CRISP-ML(Q) y calidad
 
 Es un marco del ciclo de vida de ML con atención explícita a riesgos y calidad. Sus seis fases conectan entendimiento del problema/datos, preparación, modelado, evaluación, despliegue y monitoreo/mantenimiento. Las fases pueden iterar; calidad no significa simplemente completar una lista. [E15](https://arxiv.org/abs/2003.05155).
 
-**Uso original [A]:** el TFC aplica hasta evaluación y excluye despliegue/monitoreo por ser prototipo (p. 32). **Uso nuestro [C]:** 00 define problema/evidencias; 01–03 preparan datos y features; 04–05 modelan; 06 evalúa; 07 interpreta; 08 integra e incluye despliegue conceptual.
+**Uso original [A]:** el TFC aplica hasta evaluación y excluye despliegue/monitoreo por ser prototipo (p. 32). **Uso nuestro [C]:** 00 define problema/evidencias; 01–02 preparan datos y HOG; 03 compara modelos; 04 ajusta, evalúa e interpreta; 05 integra el informe y despliegue conceptual. Solo las cuatro primeras fases tienen ejecución técnica.
 
 **Ejemplo:** riesgo “duplicado entre train y test” exige un control de hashes/grupos y evidencia de cero intersecciones conocidas. No se resuelve escribiendo “seguimos CRISP-ML(Q)”. Los riesgos residuales también se documentan.
 
 **Defensa:** relacionar una fase, un riesgo, un control y un artefacto verificable del proyecto.
 
-## 23. Stack recomendado y decisiones de simplicidad [C]
+## 20. Stack recomendado
 
 No se fijan versiones sin probar compatibilidad; sprint 01 construirá el entorno. Cada herramienta resuelve un componente concreto.
 
@@ -389,7 +333,7 @@ No se fijan versiones sin probar compatibilidad; sprint 01 construirá el entorn
 | pandas | Tablas; manifiestos, métricas y comparación | Facilita joins por ID y CSV; biblioteca csv bastaría para tareas pequeñas, pero crecen controles tabulares |
 | Matplotlib | Figuras estáticas; EDA, matrices, curvas y errores | Exportación controlable; seaborn es opcional y no necesario para gráficos exigidos |
 | scikit-learn | Pipeline, modelos, CV, tuning y métricas | API común; implementar solvers a mano agregaría errores sin requisito |
-| scikit-image | Carga/transformación y HOG/LBP | Descriptores oficiales y reproducibles; OpenCV sería alternativa, no incorporar ambos sin necesidad |
+| scikit-image | Carga/transformación y HOG | Descriptores oficiales y reproducibles; OpenCV sería alternativa, no incorporar ambos sin necesidad |
 | Jupyter | Entorno de exploración narrativa | Útil para EDA y estudio; scripts son alternativa y deben sostener la regeneración para evitar estado oculto |
 | Git | Versionado de código/documentos/configuración | Historial y comparación; copias de carpetas no ofrecen trazabilidad equivalente |
 | GitHub | Remoto oficial y revisión | Permite acceso a cátedra; ZIP sigue siendo alternativa de entrega admitida |
@@ -399,7 +343,28 @@ No se fijan versiones sin probar compatibilidad; sprint 01 construirá el entorn
 
 No se necesita TensorFlow o PyTorch para los candidatos clásicos; Docker o cloud no resuelven un requisito actual; una base de datos, frontend, API, MLflow o Kubernetes ampliarían el trabajo sin mejorar por sí mismos validez experimental. Los cuadernos no reemplazan módulos probados. Si surge una necesidad concreta, registrar decisión y costo antes de agregar tecnología.
 
-## 24. Glosario de consulta rápida
+# PARTE II · Conceptos complementarios fuera del experimento inicial
+
+Estos conceptos ayudan a entender alternativas y responder preguntas. **No constituyen backlog, ablaciones programadas ni candidatos futuros comprometidos.** Ningún sprint activo los implementa por defecto.
+
+| Concepto | Idea, utilidad y límite | Motivo para dejarlo fuera |
+|---|---|---|
+| LBP [E04] | Compara vecinos con un píxel central y agrega códigos como histograma de textura; sensible a escala, ruido y representación | HOG único evita comparar a la vez descriptor y clasificador |
+| PCA [E10] | Aprende direcciones de máxima varianza sin etiquetas y proyecta en menos componentes; varianza no equivale a discriminación | Añade ajuste y puede eliminar señal. Solo reconsiderar por problema medido de memoria, tiempo, dimensionalidad o convergencia, con decisión explícita previa |
+| KNN [E08] | Clasifica por vecinos cercanos; distancias dependen de escala y dimensión, e inferencia requiere comparar ejemplos | Ya hay dos candidatos y no hace falta sumar otra familia |
+| Regresión logística [E09] | Sigmoide de w·x+b, log-loss y regularización; produce clasificación a partir de un umbral | Solapa referencia lineal con SVM; no habrá B1 |
+| SVM RBF [E06] | Kernel exp(−gamma·distancia²), frontera no lineal y dependencia de vectores soporte | Añade gamma, búsqueda y costo; el núcleo fija SVM lineal |
+| SHAP | Atribuye contribuciones según referencia y supuestos; no demuestra causalidad y puede ser costoso | Coeficientes/importancias simples cubren la explicación inicial |
+| Wilcoxon [E19] | Rangos con signo de diferencias pareadas; requiere independencia y justificar simetría, ceros y empates | Cinco folds solapados no son cinco datasets independientes [E17] |
+| 5×2cv [E18] | Cinco divisiones bipartitas con intercambio train/validation para determinados contrastes | Exigiría otro diseño y más entrenamientos; no se aplica a los cinco folds existentes |
+
+PCA, si se autorizara por necesidad real en una revisión posterior, aprendería exclusivamente dentro del train de cada fold. Esta explicación no habilita implementarla ahora.
+
+# Consulta y preguntas de defensa
+
+Los términos complementarios del glosario no agregan tareas al alcance.
+
+## Glosario de consulta rápida
 
 | Término | Significado en este proyecto |
 |---|---|
@@ -495,7 +460,7 @@ No se necesita TensorFlow o PyTorch para los candidatos clásicos; Docker o clou
 | Sigmoide | Función que transforma un real a (0,1). |
 | Regularización L2 | Penalización de magnitud cuadrática de coeficientes. |
 | Baseline / B0 | Referencia mínima, aquí clase más frecuente. |
-| B1 / C1 / C2 | Logística adicional / SVM lineal HOG / RF LBP. |
+| C1 / C2 | SVM lineal sobre HOG escalado / RF sobre HOG. |
 | StandardScaler | Transformador con media/escala por feature. |
 | Pipeline | Encadenamiento de transformaciones y estimador. |
 | Fit / transform | Aprender estado / aplicarlo sin reaprender. |
@@ -523,7 +488,6 @@ No se necesita TensorFlow o PyTorch para los candidatos clásicos; Docker o clou
 | McNemar | Comparación pareada de tasas de error mediante discordancias. |
 | Wilcoxon | Prueba sobre rangos con signo de diferencias pareadas. |
 | 5×2cv | Diseño de cinco divisiones bipartitas con intercambio train/validation. |
-| Holm | Ajuste secuencial de multiplicidad para familia de contrastes. |
 | Coeficiente | Peso aprendido en modelo lineal. |
 | Feature importance | Resumen de uso/influencia de atributos, dependiente del método. |
 | Permutation importance | Cambio de métrica tras permutar una variable o grupo. |
@@ -583,7 +547,7 @@ Las respuestas cortas son un punto de partida: ambos integrantes deberán amplia
 | 34 | ¿Qué aprende StandardScaler? | Media y escala por atributo del train correspondiente. | Preprocesamiento |
 | 35 | ¿Qué protege Pipeline? | Ajuste coherente de transformaciones dentro de folds; no corrige pacientes repetidos. | Diseño y límites |
 | 36 | ¿Qué diferencia parámetro e hiperparámetro? | Uno se aprende en fit; el otro configura o selecciona cómo se aprende. | Optimización |
-| 37 | ¿GridSearch siempre es mejor que RandomizedSearch? | No; depende de espacio y presupuesto. Ninguno garantiza óptimo global. | Búsqueda |
+| 37 | ¿GridSearch siempre es mejor que RandomizedSearch? | Nuestro espacio pequeño usa solo GridSearchCV; no garantiza óptimo global. | Búsqueda |
 | 38 | ¿Qué significa generalizar? | Predecir en nuevos casos del dominio evaluado, no en toda población imaginable. | Validez externa |
 | 39 | ¿Cómo detectarían overfitting? | Revisando brecha train/CV y curvas, además de auditar cambios de datos/preprocesamiento. | Diagnóstico técnico |
 | 40 | ¿Qué es CRISP-ML(Q)? | Marco de seis fases con riesgos y controles de calidad del ciclo ML. | Metodología |
@@ -595,13 +559,13 @@ Las respuestas cortas son un punto de partida: ambos integrantes deberán amplia
 | 46 | ¿Media ± desvío CV es un IC del 95 %? | No; describe dispersión entre folds y requiere otros supuestos para inferencia. | Incertidumbre |
 | 47 | ¿No significativo demuestra igualdad? | No; puede faltar potencia y tampoco establece equivalencia. | Significancia |
 | 48 | ¿Importancia demuestra causalidad? | No; explica dependencia del modelo y puede reflejar correlación o atajos. | Interpretabilidad |
-| 49 | ¿Por qué no usar SHAP siempre? | Añade costo y supuestos; primero hay que definir qué pregunta resuelve. | Simplicidad |
+| 49 | ¿Por qué no usar SHAP siempre? | Está fuera del núcleo; coeficientes/importancias simples cubren el objetivo inicial. | Simplicidad |
 | 50 | ¿Se comparó con varios médicos? | No: un profesional, 52 imágenes, tres indefinidas y 49 comparables. | Validación original |
 | 51 | ¿75 % de acuerdo significa 75 % de diagnóstico correcto? | No; acuerdo y acierto frente a etiquetas son cantidades distintas. | Denominadores |
 | 52 | ¿Es D4 una prueba de COVID frente a todas las enfermedades? | No: su clase negativa son pulmones normales. | Etiquetas y población |
 | 53 | ¿Qué harían si faltan IDs de D4? | Declarar imposibilidad de réplica exacta y justificar alternativa; autorización de cátedra si sustituimos datos. | Comparabilidad |
 | 54 | ¿Qué revela la omisión de /255 en anexo IV? | Inconsistencia del código publicado; no prueba que haya causado las cifras reportadas. | Evidencia y causalidad |
-| 55 | ¿Qué medirían para afirmar menor costo? | Pipeline completo, búsqueda, ajuste, inferencia, RAM y tamaño bajo condiciones comparables. | Benchmark |
+| 55 | ¿Qué medirían para afirmar menor costo? | Tiempos aproximados de extracción, búsqueda, ajuste e inferencia, tamaño y complejidad; RAM solo si es fácil medirla. | Benchmark |
 | 56 | ¿Qué es data drift? | Cambio de distribución de entrada; no demuestra por sí solo caída de rendimiento. | Monitoreo |
 | 57 | ¿Qué harían si otro modelo gana en test? | Informarlo sin cambiar selección; una revisión exigiría un nuevo protocolo/test independiente. | Test único |
 | 58 | ¿Qué pasa si nadie supera la baseline? | Se reporta el resultado, se auditan fallos y se discuten límites sin inventar mejoras. | Integridad |

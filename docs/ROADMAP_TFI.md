@@ -2,7 +2,7 @@
 
 **Equipo:** Juan Quirós y Andruszyszyn. **Fecha:** 09/10/2026. **Estado:** planificación previa a sprint 00; ninguna implementación o experimentación propia ejecutada.
 
-Este proyecto estudiará si características explícitas de radiografías permiten construir una alternativa clásica defendible a la CNN del TFC de Vega Lencina y Armoa (2023). La recomendación inicial es comparar **HOG + SVM lineal** con **LBP + Random Forest**, usando **DummyClassifier** como baseline y regresión logística como referencia lineal adicional. La elección final dependerá de validación cruzada; no existe un ganador anticipado.
+Este proyecto estudiará si características explícitas de radiografías permiten construir una alternativa clásica defendible a la CNN del TFC de Vega Lencina y Armoa (2023). El núcleo compara **HOG + StandardScaler + SVM lineal** con **HOG + Random Forest**, usando **DummyClassifier most_frequent** como única baseline. La elección final dependerá de validación cruzada; no existe un ganador anticipado.
 
 Leer junto con [Teoría y stack](TEORIA_Y_STACK.md), [Comparativa pedagógica](COMPARATIVA_TFC_VS_PROPUESTA.md), [Fuentes y trazabilidad](FUENTES_Y_TRAZABILIDAD.md) y [Ejecución](ejecucion/README.md). Las marcas **[A] TFC**, **[B] consigna**, **[C] propuesta** y **[D] hipótesis** separan evidencia y decisiones. [E] remite a bibliografía adicional registrada en Fuentes. Citas TFC: páginas PDF/impresas, no páginas de un artículo previo.
 
@@ -178,219 +178,97 @@ La crítica más útil es convertir cada incertidumbre en un control futuro: man
 
 ## 9. Pregunta, hipótesis y objetivos propios [C, D]
 
-La pregunta inicial une tres promesas ambiguas: “competitivo”, “menor costo” y “más interpretable”. Además, una cifra histórica no basta para comparación controlada. Proponemos:
+¿Puede un enfoque clásico basado en HOG distinguir COVID de normal con desempeño comparable al de la CNN del TFC y menor complejidad computacional? Se estudiará mediante dos clasificadores sobre una representación común, respetando los límites de comparabilidad de los datos. Menor costo y explicación técnica más accesible son hipótesis: no se promete superar 79,47 % ni obtener validación clínica.
 
-> En radiografías etiquetadas COVID-19 y normales de una configuración trazable equivalente a D4, ¿qué desempeño, costo computacional y posibilidades de interpretación ofrece un pipeline clásico con HOG/LBP frente a una baseline y otros candidatos, y qué comparación permite con la CNN original según la equivalencia efectiva de datos y evaluación?
+El objetivo es formalizar entradas y etiquetas, implementar una baseline y dos candidatos, compararlos reproduciblemente y discutir errores, límites y relación con la CNN. **COVID=1, normal=0**. El objetivo de selección es F1 macro medio de CV, acompañado de recall y especificidad. En empate exacto entre candidatos se prefiere SVM lineal por simplicidad; dentro de una grilla se conserva el orden documentado. Las consecuencias de FP/FN se discuten sin inventar costos clínicos numéricos.
 
-Así mantenemos la alternativa al TFC sin prometer superioridad o validez clínica. “Competitivo” se discutirá como balance observado de **F1 macro, sensibilidad, especificidad y costo**; no como no inferioridad estadística sin margen predefinido y potencia adecuada.
+## 10. Pipeline mínimo y configuración [C]
 
-**Hipótesis D1:** HOG/LBP contienen señal suficiente para superar la referencia trivial en evaluación independiente. **D2:** el pipeline lineal puede demandar menos recursos que la CNN descrita. **D3:** la relación entre descriptores y decisiones puede explicarse más directamente en un modelo lineal. Todas pueden resultar falsas. Si no se dispone de CNN comparable, D2 solo podrá contrastarse parcialmente; no se confundirá sencillez conceptual con explicación clínica.
+`Radiografía → grises y resize 128×128 → HOG fijo → clasificador → COVID / normal`.
 
-**Objetivo general:** diseñar, implementar y evaluar posteriormente una alternativa clásica reproducible, fundamentando sus diferencias y límites frente al TFC.
-
-Objetivos específicos: reconstruir evidencia original; auditar datos/etiquetas y reservar test; construir descriptores reproducibles; comparar baseline y candidatos; ajustar solo en desarrollo; medir errores e incertidumbre; estudiar interpretabilidad y recursos; producir informe y defensa comprensibles para ambos integrantes.
-
-### Formulación formal
-
-Entrada `x`: imagen de tórax en grises, dominio de píxeles y resolución definidos. Etiqueta `y∈{0,1}`, con **1=COVID, 0=normal/NO COVID operativo**. Un descriptor fijo `φ(x)∈R^d` alimenta un clasificador `fθ`; scaler y PCA, si existen, aprenden solo de train. Se minimiza la función de entrenamiento correspondiente a cada familia (teoría) y se selecciona configuración por **F1 macro medio en CV**. No confundir función de costo del algoritmo con métrica de selección.
-
-## 10. Pipeline y alternativas [C]
-
-```mermaid
-flowchart TD
-    A[TFC original y consigna] --> B[Análisis crítico y trazabilidad]
-    B --> C[Dataset comparable y auditoría de grupos]
-    C --> D[Partición y reserva de test]
-    D --> E[Desarrollo: EDA y preprocesamiento]
-    E --> F[HOG o LBP]
-    F --> G[Baseline y candidatos en Pipeline]
-    G --> H[CV y tuning solo en desarrollo]
-    H --> I[Modelo y comparadores congelados]
-    I --> J[Una evaluación final de test]
-    J --> K[Comparación con CNN según equivalencia]
-    K --> L[Errores, interpretación y conclusiones]
-    D -. Test sellado hasta evaluación .-> J
-```
-
-Preprocesamiento inicial propuesto: carga validada, grises, resize fijo **128×128**, tipo numérico/rango explícitos, sin aumentación ni filtros clínicos. Esta resolución es un punto inicial por costo, no un óptimo ni una copia de los 299×299 originales. Variantes deben decidirse en desarrollo y quedar congeladas antes de test. Mantener proporción si cambia la forma de entrada; documentar padding/recorte. No aprender estadísticas globales ni aplicar limpieza guiada por aciertos.
-
-| Combinación | Adecuación, dimensión y costo | Generalización / interpretación | Decisión |
-|---|---|---|---|
-| A: HOG → StandardScaler → SVM lineal | Bordes locales; 8100 features con 128², celdas 8², bloques 2² y 9 bins. Inferencia producto escalar; fit razonable pero depende de n/d | Margen regularizado, pesos inspeccionables; sensible a artefactos y alineación | **Candidato principal C1**, sin declararlo ganador |
-| B: HOG → scaler → PCA → SVM | Menos columnas puede reducir costo posterior; PCA tiene costo propio. Con RBF fit crece fuertemente con n y memoria | Puede eliminar señal de poca varianza; componentes dificultan explicación | Ablación PCA de C1; RBF opcional y acotado por presupuesto |
-| C: LBP → Random Forest | Histograma compacto de textura; árbol por bootstrap y submuestreo de features; sin necesidad de scaler | No lineal, regularizar profundidad/hojas; importancia no causal | **Candidato C2** con representación distinta |
-| C alternativa: HOG o HOG+LBP → RF | Posible combinación de forma/textura, mucho mayor dimensión y correlación | Dificulta separar efectos del descriptor/modelo | Comparación controlada opcional, no producto cartesiano completo |
-| D: LBP → scaler → KNN | Fit casi almacenamiento; inferencia recorre vecinos, costo y memoria dependen de n | Explica vecinos similares pero similitud no equivale a causa; sufre alta dimensión | Candidato opcional pedagógico, con k y distancia controlados |
-| E: DummyClassifier `most_frequent` | Ignora imagen y aprende clase más frecuente en train | Referencia mínima; no evidencia de señal visual | **Baseline B0 obligatoria** |
-| HOG → scaler → regresión logística L2 | Referencia lineal con log-loss, puntuación probabilística | Coeficientes y regularización; sin calibración garantizada | **Referencia B1 adicional recomendada**, además de C1/C2 |
-
-No llamar a B1 la única baseline para ocultar B0. Comparar HOG-SVM y LBP-RF evalúa **pipelines completos**: no permite atribuir toda diferencia solo al clasificador. Para aislar factores, extensión pequeña predefinida: HOG-RF frente a HOG-SVM o LBP-SVM frente a LBP-RF; justificar costo antes de ejecutarla.
-
-LBP inicial: `uniform`, P=8, R=1, histogramas normalizados por celdas de una grilla 4×4; P+2=10 bins por celda, total **160** valores. El mapa LBP no es por sí mismo un vector de longitud independiente del tamaño; se agrega por histogramas. HOG/LBP no se ajustan con etiquetas, pero elegir sus parámetros sí forma parte de selección en desarrollo.
-
-## 11. Datos para la alternativa y condiciones de comparación [C]
-
-Preferimos el **criterio de etiquetas de D4**, porque corresponde a la mejor referencia binaria del TFC. La equivalencia exacta queda condicionada a obtener versión del dataset, IDs de imágenes, exclusiones, grupos/pacientes y particiones originales. Repetir depuración “a ojo” hasta obtener 2462 por clase **no reconstruye D4** y puede seleccionar casos fáciles.
-
-Tres niveles de comparación:
-
-1. **Histórica contextual (mínimo viable):** comparar nuestros resultados con cifras publicadas, describiendo diferencias de datos, limpieza, split, hardware y preprocesamiento. Sin pruebas pareadas contra el 79,47 %.
-2. **Misma población, nuevo split:** subconjunto equivalente y partición nueva segura. Mejora comparabilidad de tarea; no es réplica exacta del test original.
-3. **Controlada:** mismas imágenes/grupos y test independiente para ambos modelos, entrenamiento compatible, predicciones individuales y medición en el mismo hardware. Solo entonces puede haber comparación pareada. Reentrenar una CNN es una ampliación futura que requiere decisión explícita, no parte automática de estos sprints.
-
-Un modelo CNN entrenado previamente no puede evaluarse sobre un nuevo test si se desconoce si ya vio esas imágenes. Usar el test histórico también hereda la selección previa del TFC; declararlo como conjunto históricamente utilizado, sin venderlo como validación externa intacta.
-
-Si no se recuperan IDs de D4, documentar la imposibilidad, proponer subconjunto nuevo con reglas verificables y obtener autorización de cátedra cuando se trate de datos públicos equivalentes sustitutos (TFI §4). Preservar la limitación en el informe. No es necesario inventar equivalencia para completar un TFI riguroso.
-
-## 12. Validación y prevención de fuga [C]
-
-**Protocolo por defecto:** separar aproximadamente **80 % desarrollo y 20 % test** una sola vez, con semilla 42 y estratificación si es compatible con grupos. Dentro de desarrollo, **5 folds** para comparación y tuning; cada fold usa cuatro partes como train y una como validation. No añadimos otro holdout de validación fijo. Cada ajuste usa aproximadamente 64 % del total para train y 16 % para validation; al seleccionar, se reentrena en el 80 % completo. Estos son porcentajes propuestos, distintos del 80/10/10 histórico.
-
-Prioridad: independencia por paciente/estudio y duplicados por encima de porcentajes exactos. Si hay pacientes repetidos, holdout agrupado y `StratifiedGroupKFold` cuando sea factible. Si faltan IDs, agrupar duplicados exactos y sospechosos confirmados; eso no acredita independencia de pacientes. Si no hay suficientes grupos por clase para cinco folds, reducir k con justificación **antes del modelado** y compartir mismos folds entre métodos. Sin grupos conocidos, `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)` con limitación explícita.
-
-Controles previos al sellado: archivos corruptos, hashes, duplicados, etiquetas conflictivas, metadatos de procedencia y reglas de elegibilidad. Esa auditoría estructural puede abarcar el inventario completo para evitar cruce de duplicados; **no permite explorar patrones predictivos del test**. Después, EDA y decisiones de calidad/representación se hacen en desarrollo. Una exclusión necesaria descubierta tarde implica registrar incidencia y reevaluar validez, no cambiar silenciosamente test.
-
-Cada fold ajusta `StandardScaler`, PCA, selección de features o imputación **solo en su train** mediante `Pipeline`. Un scaler ajustado con todo el desarrollo antes de CV filtra información de validation aun si no usó test. Extraer HOG fijo por imagen puede cachearse por hash+configuración; cachear PCA ajustado antes de folds no. Balanceo por pesos se calcula dentro del fit; cualquier remuestreo se limitaría a train, aunque no se propone inicialmente.
-
-No utilizar test para elegir extractor, resolución, modelo, PCA, umbral, hiperparámetros, exclusiones por desempeño ni calibración. Conservar manifiesto con hash y registro de accesos. Pipeline no impide por sí solo pacientes repetidos o intervención humana basada en test.
-
-## 13. Comparación, CV y tuning [C]
-
-Sprint 04 compara configuraciones iniciales fijas en los mismos folds. Sprint 05 ajusta las familias principales; baseline y B1 se reportan sobre esos mismos folds. Guardar por fold F1 macro, precision/recall/F1 de cada clase, accuracy, especificidad, ROC-AUC y AP cuando haya scores válidos, junto con train score, tiempos y fallos. Resumir **media ± desvío estándar muestral (ddof=1)**; no interpretarlo como intervalo de confianza por independencia.
-
-El mejor promedio de una búsqueda CV es una estimación de **selección**, potencialmente optimista. El test final estima generalización del pipeline elegido. CV anidada sería una extensión justificable si se necesita estimar sin ese optimismo el proceso completo de tuning; no añadirla por costumbre ni aplicar estadística ingenua sobre los folds de búsqueda.
-
-| Familia | Espacio preliminar de tuning | Motivo |
+| Ruta | Configuración inicial | Función |
 |---|---|---|
-| SVM lineal | C∈{0,01;0,1;1;10}; pesos∈{None,balanced} | Compromiso margen/errores; costos por clase |
-| PCA + SVM | PCA `passthrough` frente a 0,95 de varianza, solver compatible con fracción | Contrastar reducción con su ausencia; no asumir beneficio |
-| RF sobre LBP | 200 árboles; max_depth∈{None,10,20}; min_samples_leaf∈{1,3,5}; max_features∈{sqrt,0.5} | Capacidad y regularización; 18 configuraciones |
-| Logística B1 | C∈{0,1;1;10}; penalización L2; convergencia comprobada | Referencia lineal regularizada |
-| KNN opcional | k∈{3,5,11,21}, weights∈{uniform,distance}, p∈{1,2} | Vecindad, ponderación y geometría |
-| RBF opcional | C y gamma en escalas logarítmicas; ≤12 sorteos | No linealidad a costo controlado |
+| B0 | DummyClassifier(strategy="most_frequent") | Control trivial; aprende la clase mayoritaria del train e ignora las features |
+| C1 | HOG → StandardScaler → LinearSVC(C=1) | Frontera lineal regularizada sobre el vector HOG |
+| C2 | HOG → RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_leaf=1) | Reglas no lineales sobre el mismo vector; sin escalado necesario |
 
-Propuesta base: 8 configuraciones SVM sin PCA y 8 con PCA, 18 RF y 3 logística: **37×5=185 ajustes CV**, más baselines, reentrenamientos y exploración previa. Son cálculos de presupuesto, no ejecuciones. HOG/LBP y resolución permanecen fijos en esta búsqueda inicial. Un cambio amplía presupuesto y debe registrarse antes de test. `GridSearchCV` para grillas pequeñas; `RandomizedSearchCV` con semilla y `n_iter` para rangos amplios. No ejecutar todas las alternativas opcionales por defecto.
+HOG: **128×128**, `orientations=9`, `pixels_per_cell=(8,8)`, `cells_per_block=(2,2)`, `block_norm="L2-Hys"`, `transform_sqrt=False`. Produce `15×15×2×2×9=8100` atributos. Es cálculo de diseño, no extracción ejecutada. Se fijarán rango, tipo, interpolación y tratamiento de aspecto en 01; se implementarán una sola vez en 02. No hay búsqueda de configuraciones HOG.
 
-Seleccionar al final de 05 por F1 macro medio; para empate práctico predefinido de **≤0,005** en F1, preferir menor tiempo total de ajuste y después menor tamaño de artefacto. Esa tolerancia es operativa, no equivalencia estadística ni margen clínico. Reportar siempre sensibilidad/especificidad aunque el seleccionado no lidere ambas. Congelar umbral estándar (0 para decision_function; 0,5 para probabilidad binaria) y registrar regla de empates. Si se propone modificarlo, validarlo únicamente en desarrollo antes del cierre 05.
+LinearSVC usará regularización L2, pérdida squared_hinge y `class_weight=None`; registrar solver/tolerancia/max_iter y atender convergencia sin ocultar avisos. RF mantiene `max_features="sqrt"`, bootstrap y `class_weight=None`; seed 42 en operaciones aleatorias. C1 y C2 reciben la misma información HOG: el scaler de C1 es parte de su pipeline.
 
-## 14. Evaluación, métricas y comparación CNN [C]
+**Fuera del experimento inicial:** LBP, PCA, KNN, regresión logística, SVM RBF y SHAP. Se conservan brevemente como teoría complementaria; no son tareas opcionales programadas. PCA solo podrá reconsiderarse ante un problema **medido** de memoria, tiempo, dimensionalidad o convergencia, con decisión explícita que revise el alcance antes de implementarla. Tener 8100 atributos por sí solo no demuestra tal problema.
 
-Sprint 06 consume por primera vez el test para un **único lote de evaluación** de final y comparadores precongelados (B0, B1 si se incluyó y dos candidatos). La elección ya está hecha; si otro candidato obtiene mejor test, no cambiar ganador. Guardar una vez predicciones/scores por ID; cálculos y gráficos posteriores reutilizan ese archivo. No abrir test por separado durante diseño.
+## 11. Datos, EDA y particiones [C]
 
-| Métrica | Qué responde y por qué conservarla |
-|---|---|
-| Matriz VP/VN/FP/FN | Muestra errores absolutos, clase positiva explícita y tamaño de muestra |
-| F1 macro | Criterio principal de selección: peso igual a ambas clases |
-| Precision COVID | Qué fracción de predicciones COVID coincide con etiqueta positiva |
-| Recall/sensibilidad COVID | Qué fracción de positivos etiquetados recupera |
-| Especificidad | Qué fracción de normales no marca como COVID |
-| F1 por clase y accuracy | Equilibrio precision/recall y referencia descriptiva al TFC |
-| ROC y ROC-AUC | Discriminación a través de umbrales usando scores, no solo etiquetas |
-| PR y Average Precision (AP) | Tradeoff de recuperación y precision; útil ante desbalance. Informar prevalencia y distinguir AP de área trapezoidal PR |
+Se prioriza la base del TFC y una definición comparable a D4. Versión, licencia, disponibilidad, metadatos e IDs de D4 siguen pendientes. No inventar el subconjunto depurado ni repetir limpieza subjetiva para alcanzar una cifra. Si no se recupera el original y se sustituye por un dataset público equivalente, justificar y obtener autorización de cátedra según consigna §4.
 
-Un FN clasifica como normal una imagen etiquetada COVID; en un uso indebido podría generar falsa tranquilidad. Un FP marca como COVID una normal y podría originar evaluación innecesaria. Estas son implicancias potenciales, no recomendaciones de diagnóstico. La etiqueta del dataset no certifica por sí sola hallazgos visibles ni estado clínico actual.
+Crear un manifiesto sencillo con ID, ruta relativa, hash, etiqueta, fuente y paciente/grupo cuando exista; agregar partición y fold. La auditoría estructural identifica archivos ilegibles y duplicados exactos por hash antes del split; resolver duplicados/etiquetas contradictorias con una regla documentada. La búsqueda perceptual de casi duplicados queda fuera inicialmente: solo se reconsidera si EDA aporta evidencia concreta.
 
-Comparación de costo: medir extracción, ajuste final, búsqueda total, inferencia completa por imagen/lote (lectura+preprocesamiento+features+clasificador), pico RAM, CPU/hilos, tamaño serializado, versiones y hardware. Registrar calentamiento y mediana/p95 de latencia con repeticiones fijadas, sin repetir decisiones sobre test. No comparar una inferencia SVM sin extracción con CNN de extremo a extremo. Interpretabilidad: complejidad del modelo, posibilidad de asociar coeficientes a regiones y estabilidad de explicaciones; no un eslogan de “caja blanca”.
+Reservar aproximadamente **80 % desarrollo y 20 % test**, seed **42**. Priorizar pacientes/grupos separados si hay identificadores viables. Dentro de desarrollo usar **StratifiedKFold(n_splits=5, shuffle=True, random_state=42)** cuando sea razonable asumir independencia; si hay grupos, usar una partición agrupada viable, por ejemplo StratifiedGroupKFold. Comprobar clases y grupos suficientes; si no los hay, documentar y revisar el protocolo antes de entrenar. No fabricar IDs de paciente a partir del nombre de archivo.
 
-CNN histórica: accuracy/precision/recall/F1 disponibles; especificidad derivable de matriz; AUC, latencia controlada, RAM pico y bytes de artefacto **no reportados de manera comparable**. Usar “no disponible”, nunca cero. Sin ejecución equivalente no afirmar ahorro medido respecto a 40 minutos–6 horas.
+La EDA visual y decisiones sobre distribución, calidad, ejemplos y posibles atajos se hacen en desarrollo. El inventario mínimo necesario para particionar no habilita explorar errores o métricas del test. Guardar el split como tabla basta: **no se implementan mecanismos programáticos de bloqueo o sellado**. Si faltan pacientes queda riesgo residual explícito. No imponer balance artificial ni aumentar datos como tarea inicial.
 
-## 15. Estadística propuesta [C]
+## 12. Validación y tuning acotado [C]
 
-Primero reportar diferencias de tamaño de efecto e incertidumbre. No hacer que un p-valor decida el ganador tras test. Para intervalos de métricas finales puede planificarse bootstrap pareado de predicciones congeladas, por paciente/grupo si corresponde; fijar semilla, 2000 remuestreos y método percentil antes de apertura. No implica reentrenar o consultar de nuevo el test. Con pocos grupos o una clase ausente en remuestreos, informar la limitación y método de tratamiento predefinido.
+Los tres modelos se comparan sobre los mismos cinco folds de desarrollo. HOG es determinista por imagen; StandardScaler aprende media/escala exclusivamente en el train de cada fold mediante Pipeline. No calcular estadísticas globales antes de CV. Registrar métricas por fold y **media ± desvío estándar muestral**; los folds comparten entrenamiento y no son cinco datasets independientes.
 
-| Método | Comparación permitida | Supuestos / decisión para este proyecto |
+03 compara configuraciones iniciales; 04 realiza **GridSearchCV** sobre ambos candidatos con los mismos folds y F1 macro. Única grilla:
+
+| Candidato | Hiperparámetros buscados | Configuraciones |
+|---|---|---:|
+| C1 | C: 0.1, 1, 10 | 3 |
+| C2 | n_estimators: 100, 200; max_depth: None, 20; min_samples_leaf: 1, 3 | 8 |
+
+La grilla suma 11 configuraciones × 5 folds = **55 ajustes de CV**, sin contar la comparación inicial ni reajustes finales. Es una cuenta de costo prevista, no un objetivo de cantidad ni permiso para ampliar búsqueda. No usar RandomizedSearchCV ni ensayos de otros descriptores. Registrar tiempos aproximados y fallos técnicos. La mejor media de búsqueda es una estimación de selección potencialmente optimista; el test final cubre la evaluación retenida.
+
+## 13. Orden de evaluación y estadística [C]
+
+Todo ocurre en 04, en este orden:
+
+1. Tuning exclusivamente en desarrollo.
+2. Comparar CV de B0/C1/C2, incluida dispersión y límites.
+3. Seleccionar candidato por la regla de 09, aunque el resultado no supere B0.
+4. Congelar por escrito configuración, parámetros, split, commit de código y decisión. Un registro breve basta; el commit final vincula los artefactos. Predefinir comparadores y, si procede, un solo contraste C1 frente a C2.
+5. Reajustar los modelos fijados con todo desarrollo y evaluar **test una única vez**, en un lote de B0/C1/C2 predefinido. La selección ya no cambia por resultados de test.
+6. Guardar predicciones por ID, matriz de confusión, accuracy, precision, recall, especificidad, F1 por clase y F1 macro. ROC-AUC solo con scores continuos válidos y ambas clases; curva PR/AP solo si el desbalance observado en desarrollo justifica su aporte.
+7. Analizar FP/FN, aciertos y limitaciones de calidad/procedencia. Interpretar el modelo elegido sin modificarlo.
+8. Aplicar McNemar **solo si corresponde**: mismas imágenes, predicciones individuales pareadas, comparadores fijos y unidades razonablemente independientes. Documentar discordancias b/c, n, diferencia de accuracy y p bilateral; α=0.05 fijado antes de test. Puede usarse la variante exacta binomial. Si no se cumplen supuestos, explicar la omisión.
+
+La estadística principal es descriptiva: media/desvío CV y test reservado. No se agregan Wilcoxon, 5×2cv, bootstrap inferencial ni múltiples contrastes. El bootstrap interno de RF es parte del algoritmo y no constituye un plan estadístico adicional. McNemar compara tasas de error, no F1 ni superioridad clínica. Con cifras agregadas del PDF no puede hacerse contraste pareado contra CNN.
+
+La referencia histórica es accuracy **79,47 %**, precision COVID **0,7912**, recall **0,8008**, F1 **0,7960**. Se comparan métricas equivalentes y se declaran diferencias de población, split, preprocesamiento y hardware. Si no hay test idéntico, la comparación es contextual; superar esa cifra no prueba superioridad controlada.
+
+## 14. Interpretación, costo y figuras [C]
+
+Si gana SVM, examinar coeficientes asociados a bloques/orientaciones HOG con cuidado por escala y correlación. Si gana RF, mostrar importancia de features por impureza y sus sesgos; permutation importance solo si aporta una explicación comprensible sobre datos de desarrollo y se identifica su condición de evaluación. No exigir guardar todos los modelos de folds ni crear conjuntos adicionales para explicaciones. Los coeficientes/importancias no son mapas clínicos ni prueba causal.
+
+Medir aproximadamente tiempo de extracción, búsqueda/entrenamiento e inferencia, tamaño del modelo y complejidad general con hardware y alcance de medición declarados. Inferencia debe aclarar si incluye lectura y HOG. RAM es opcional si se obtiene fácilmente. No crear profiling permanente, telemetría ni infraestructura de control de hilos.
+
+Figuras mínimas futuras: EDA de desarrollo, comparación CV, matrices y ejemplos de errores, explicación del elegido. ROC y PR solo bajo las condiciones de 13; curvas de aprendizaje cuando respondan una duda concreta en desarrollo, antes de congelar. Todas deberán tener número, título, ejes/unidades y referencia interpretativa en el texto (TFI §5.6). No generar curvas por cumplir una lista sin utilidad.
+
+## 15. Reproducibilidad y estructura prevista [C]
+
+Python, NumPy, pandas, Matplotlib, scikit-image, scikit-learn, venv y Git/GitHub bastan para el núcleo. Jupyter es opcional para EDA; comandos reproducibles sostienen la ejecución. Fijar versiones probadas en 01 y seed 42. SciPy solo si se importa para McNemar exacto; no sumar frameworks de experimentación.
+
+Estructura **futura, todavía no creada**: `src/data.py`, `src/features.py`, `src/models.py`, `src/evaluation.py`; `configs/experimento.json`; `data/manifiesto.csv`; `results/` para CV, predicciones y métricas; `reports/` para figuras/informe; `tests/` para contratos relevantes; `requirements.txt`; `docs/REGISTRO_EJECUCION.md` y `docs/REGISTRO_IA.md`. Mantener scripts y funciones pequeños; pruebas de separación, transformaciones, métricas y carga del modelo. No crear capas vacías.
+
+El registro breve por sprint contendrá fecha, entradas, decisión, evidencia, limitaciones, comandos y cierre. Versionar manifiestos publicables, configuración y resultados pequeños; excluir datos pesados, identificadores sensibles y credenciales. Declarar IA con herramienta, versión conocida o no informada, propósito y verificación. Reproducibilidad se comprobará con comandos y entorno, no por cantidad de infraestructura.
+
+## 16. Ética, entrega y criterios de éxito [B, C]
+
+Discutir privacidad, licencia, sesgo de fuente/población, FP/FN y uso indebido como diagnóstico. Las cuatro primeras fases CRISP-ML(Q) organizan el trabajo activo. Despliegue, integración, monitoreo, drift y reentrenamiento se describen **solo conceptualmente**, incluyendo costos, latencia, límites y requisitos de una hipotética validación posterior; no se construyen servicios.
+
+Éxito: reconstrucción fiel, baseline y dos candidatos evaluados sin fuga conocida, selección justificada, evidencia reproducible y defensa honesta aunque ningún candidato supere al original. No usar 79,47 % como umbral académico. Informe y defensa deben cubrir formato, resumen bilingüe, bibliografía uniforme, anexo IA y rúbrica de la [matriz de requisitos](FUENTES_Y_TRAZABILIDAD.md). Los pendientes administrativos y de acceso a datos se mantienen explícitos.
+
+## 17. Secuencia de seis sprints [C]
+
+| Sprint | Resultado esperado | Estado |
 |---|---|---|
-| McNemar | Dos clasificadores fijos en las **mismas instancias**, tabla de aciertos discordantes b/c | Pares independientes entre pacientes; exacta binomial sobre b+c si muestra pequeña. No compara AUC ni magnitud F1. No puede calcularse con dos accuracies publicadas |
-| Wilcoxon de rangos con signo | Diferencias pareadas de rendimiento en unidades independientes, distribución de diferencias aproximadamente simétrica | Folds comparten entrenamiento: cinco folds de este único dataset no son cinco experimentos independientes. No aplicarlo automáticamente |
-| t pareado 5×2cv | Comparación de algoritmos bajo cinco divisiones 50/50 y sus intercambios | Diseño específico, diez entrenamientos por algoritmo, ajustar tuning sin contaminación. No es el t-test común de cinco folds; extensión fuera del protocolo básico |
+| 00 Análisis TFC | Revisión por integrantes, alcance y trazabilidad aceptados | No iniciado |
+| 01 Datos y EDA | Datos autorizados, auditoría, manifiesto/split, EDA y entorno | No iniciado |
+| 02 HOG y baseline | HOG fijo probado y B0 evaluada en desarrollo | No iniciado |
+| 03 Modelos y CV | C1/C2 iniciales comparados con B0 en folds comunes | No iniciado |
+| 04 Tuning y evaluación | Selección, registro previo, test único, errores e interpretación | No iniciado |
+| 05 Informe y defensa | Informe, comparación, ética, despliegue conceptual y ensayo | No iniciado |
 
-Fuentes [E17–E20](FUENTES_Y_TRAZABILIDAD.md). McNemar es la opción preferida **si** hay pares válidos; contraste primario propuesto: final frente a B0 en el test único, α=0,05 bilateral, definido antes de abrirlo. Una comparación adicional con CNN solo si hay predicciones sobre ese mismo test y entrenamiento independiente. Si se agregan múltiples contrastes, definir familia y ajuste Holm antes de evaluación. Si faltan independencia o datos pareados, justificar la omisión del test estadístico y reportar evidencia descriptiva; “no significativo” no prueba igualdad. No se aplica ninguna prueba ahora.
-
-## 16. Interpretabilidad y análisis de errores [C]
-
-En 07 se estudian FP/FN y aciertos con un protocolo de muestreo que evite elegir solo imágenes convenientes. Registrar calidad, procedencia y subgrupos disponibles, sin inferir edad/sexo ni diagnóstico por apariencia. Examinar si errores se concentran en artefactos, calidad o fuente, distinguiendo observación de explicación hipotética.
-
-SVM lineal/logística: mapear coeficientes a bloques/bins HOG y documentar efecto del escalado; un peso no es una lesión localizada. Si hay PCA, los coeficientes en componentes requieren retroproyección con escalas para asociarse al descriptor original. RF: importancia por impureza solo orientativa; preferir permutación repetida por **grupos de descriptores/regiones** en datos de desarrollo retenidos o fuera de fold. Correlación puede repartir/ocultar importancia. KNN: mostrar vecinos de train sin convertir similitud en explicación clínica. SHAP queda fuera del mínimo: incorporarlo solo si responde una pregunta que estas técnicas no resuelven y hay presupuesto.
-
-Después del test, cualquier propuesta de mejora va a trabajo futuro. El análisis descriptivo de errores reutiliza predicciones de 06; no permite volver a seleccionar modelos.
-
-## 17. Reproducibilidad, stack y estructura futura [C]
-
-Python con venv; NumPy, pandas, Matplotlib, scikit-image y scikit-learn; Jupyter como apoyo de exploración; Git/GitHub para documentación, código, configuraciones y resultados pequeños. SciPy ya acompaña al stack y podrá aportar estadística justificada; no agregar statsmodels solo por McNemar si una prueba binomial exacta de SciPy cubre el cálculo validado. No necesitamos TensorFlow/PyTorch, frontend, API, base de datos, Docker, cloud, MLflow ni Kubernetes para este alcance. La explicación de elecciones y alternativas está en teoría.
-
-Semillas separadas registradas para split, folds, modelos, búsqueda y remuestreo (base 42 como propuesta). Fijar versiones **realmente comprobadas** en 01; no inventar hoy un requirements compatible. Registrar OS, CPU, RAM, hilos, commit, versión y hash de dataset, licencia, manifiestos de partición, configuración, exclusiones, scores y comandos. Semilla sola no asegura identidad entre equipos/versiones. No versionar radiografías, secretos ni binarios pesados. IDs/manifiestos publicados deben ser no identificatorios y compatibles con licencia.
-
-```text
-ia2-covid-xray-ml/
-├── README.md
-├── requirements.txt                # futuro, versiones comprobadas
-├── .gitignore
-├── configs/                       # JSON: datos, modelos, protocolo
-├── data/
-│   ├── raw/                       # local e inmutable
-│   ├── processed/                 # local, derivados y cache
-│   └── manifests/                 # IDs publicables y hashes; sin datos personales
-├── notebooks/                     # EDA reproducible
-├── src/
-│   ├── data/
-│   ├── features/
-│   ├── models/
-│   └── evaluation/
-├── tests/                         # controles de contratos e independencia
-├── models/                        # artefactos locales, ignorados
-├── results/
-│   ├── metrics/
-│   ├── figures/
-│   └── reports/
-└── docs/
-    ├── ROADMAP_TFI.md
-    ├── TEORIA_Y_STACK.md
-    ├── FUENTES_Y_TRAZABILIDAD.md
-    └── ejecucion/
-```
-
-Es una estructura futura: en esta etapa solo se crean documentos y `.gitignore`. Los archivos de resultados solo se crearán con ejecuciones reales.
-
-## 18. Riesgos, ética y despliegue conceptual [C]
-
-| Riesgo | Control y responsable de resolver |
-|---|---|
-| D4 irreproducible o licencia incierta | Equipo verifica procedencia/IDs/licencia en 00–01; cátedra autoriza sustitución si aplica |
-| Pacientes/duplicados cruzados | Auditoría y splits agrupados; documentar riesgo residual sin IDs |
-| Sesgo de procedencia | Tablas por fuente y análisis estratificado si metadatos lo permiten |
-| Descriptor aprende bordes/texto ajenos a pulmón | EDA en desarrollo, visualización y análisis de errores; no prometer segmentación |
-| Selección manual de casos fáciles | Reglas previas, registro de exclusiones, no filtrar según aciertos |
-| Búsqueda excesiva o RBF costoso | Presupuesto de fits/RAM y grillas acotadas; reducir antes de test |
-| Información clínica no representativa | Describir población y clases restringidas; no inferir equidad no medida |
-| Resultado inferior al original o baseline | Es un resultado científico válido si protocolo y explicación son sólidos |
-| Uso indebido como diagnóstico | Identificar siempre prototipo académico y límites |
-
-El sistema **no reemplaza diagnóstico médico, evaluación clínica, pruebas diagnósticas oficiales ni criterio profesional**. Datos históricos de pandemia pueden diferir en prevalencia, equipos, protocolos, selección de pacientes y enfermedades concomitantes; un test interno no mide generalización actual. No publicar imágenes identificatorias ni pedir acceso clínico adicional en esta etapa. La declaración de IA generativa es obligatoria y los estudiantes responden por cada cifra, fuente y decisión.
-
-Despliegue conceptual: una función local carga un pipeline versionado y valida formato, tamaño/rango y clase; devuelve clasificación académica y score con sus límites. Registrar errores de entrada, versión y tiempos sin datos personales. Un despliegue real exigiría validación y gobernanza fuera de este TFI. Monitoreo conceptual: distribución de entrada/calidad/fuentes (data drift), rendimiento cuando haya etiquetas fiables (model drift), política de revisión humana antes de reentrenar, nueva evaluación y posibilidad de volver a versión anterior. No automatizar reentrenamientos ante cualquier cambio de histograma.
-
-## 19. Criterios de éxito y alcance [C]
-
-Éxito académico significa: trazabilidad del análisis; baseline y dos candidatos realmente comparados; particiones auditables; transformaciones dentro de folds; test usado una vez; resultados regenerables; métricas y costos honestos; interpretación con límites; informe conforme a consigna; ambos integrantes capaces de explicar todo. **No se impone superar 79,47 %** ni se prometen reducciones de costo.
-
-Dentro de alcance: clasificación supervisada binaria, HOG/LBP, modelos clásicos acotados, PCA como ablación pertinente, CV/tuning, estadística condicionada a supuestos, ética y despliegue conceptual. Fuera: diagnóstico clínico, nuevas CNN/transfer learning, segmentación entrenada, clasificación multiclase, aplicación productiva, recolección hospitalaria, infraestructura MLOps y ensayos clínicos. No se implementa nada de esto ahora.
-
-Resultado esperado: un estudio reproducible que indique qué enfoque funciona mejor **bajo las condiciones efectivamente evaluadas**, incluyendo resultados negativos e incertidumbres. Los campos de desempeño propio permanecen pendientes hasta 06; las conclusiones finales solo se escribirán después.
-
-## 20. Roadmap por etapas [C]
-
-| Sprint | Entrega futura | Dependencia / frontera |
-|---|---|---|
-| [00 Análisis](ejecucion/SPRINT_00_ANALISIS_TFC.md) | Auditoría estructurada de fuentes, requisitos y decisiones revisada por estudiantes | Nueva instrucción; no descargar datos |
-| [01 Datos](ejecucion/SPRINT_01_DATOS.md) | Entorno, adquisición trazable, inventario y partición sellada | 00 cerrado; permisos de datos resueltos |
-| [02 EDA](ejecucion/SPRINT_02_EDA.md) | Calidad y exploración solo de desarrollo; preprocesamiento definido | 01 cerrado |
-| [03 Features y baseline](ejecucion/SPRINT_03_FEATURES_BASELINE.md) | Transformaciones, HOG/LBP y B0 | 02 cerrado; sin candidatos |
-| [04 Modelos](ejecucion/SPRINT_04_MODELOS.md) | C1/C2 y B1 comparados en CV con configuración fija | 03 cerrado; sin búsqueda ni test |
-| [05 Optimización](ejecucion/SPRINT_05_OPTIMIZACION.md) | Tuning, selección en desarrollo y protocolo final congelado | 04 cerrado; test intacto |
-| [06 Evaluación](ejecucion/SPRINT_06_EVALUACION.md) | Test único, métricas, recursos y estadística válida | 05 cerrado; no elegir después por test |
-| [07 Interpretabilidad](ejecucion/SPRINT_07_INTERPRETABILIDAD.md) | Explicaciones y errores del modelo congelado | 06 cerrado; sin reentrenamiento correctivo |
-| [08 Informe y defensa](ejecucion/SPRINT_08_INFORME_DEFENSA.md) | Informe, anexos, presentación y ensayo reproducible | 07 cerrado |
-
-La elección se congela en **05**; 06 solo la ratifica documentalmente antes de abrir test. Así se conserva el orden solicitado sin seleccionar usando resultados finales. No comenzar un sprint sin aceptación del anterior. Todos están pendientes; el próximo es **SPRINT_00_ANALISIS_TFC**, solo con nueva solicitud expresa.
-
-Mantener también la comparativa cuando cambien decisiones del roadmap. La solicitud adicional del usuario se incorporó como documentación; no autoriza ejecutar automáticamente un sprint de implementación.
+Planes y prompts en [Ejecución](ejecucion/README.md). Los nueve planes anteriores son [historial archivado](archivo/planificacion_inicial/README.md). Este sprint correctivo solo revisa documentación; **no inicia 00**. Cada sprint futuro exige su solicitud y el cierre verificable del anterior; no encadenarlos automáticamente.

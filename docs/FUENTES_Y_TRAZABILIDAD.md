@@ -59,21 +59,21 @@ No hay evidencia suficiente para afirmar pacientes compartidos entre particiones
 |---|---|---|
 | 4 y 5.1 | TFC asignado, crítica respetuosa y sustentada | Roadmap; 00 |
 | 4 | Dataset público equivalente si falta el original: autorización de cátedra y justificación | 00–01; bloqueo solo de sustitución de datos |
-| 4 | Protección de información personal; la consigna menciona Ley 25.326 | 01, 07, 08; citar requisito, sin emitir dictamen legal |
-| 5.2.1 | Entrada, objetivo, criterio a optimizar, teoría, costo y supuestos de cada modelo | Roadmap y teoría; 03–05 |
-| 5.2.2 | Baseline más al menos dos candidatos; selección experimental | 03–06 |
-| 5.3 | Pipeline, CV, tuning sin test, semillas, entorno y regeneración completa | 01–06 |
-| 5.4 | Métricas justificadas, media/desvío CV, estadística cuando corresponda, test único y contraste equivalente | 05–06 |
-| 5.5–5.6 | Errores, interpretabilidad, EDA, curvas apropiadas y figuras interpretadas | 02, 05, 06, 07 |
-| 5.7–5.8 | Ética, despliegue conceptual, monitoreo, discusión y límites | 07–08 |
-| 7.1 | PDF A4, márgenes 2,5 cm, Arial/Times 11–12 pt, interlineado 1,15–1,5, numeración; 20–30 páginas orientativas sin anexos; APA 7 o IEEE consistente | 08; se propone IEEE |
-| 7.1 | Carátula con legajos/docentes/fecha; resumen ≤250 palabras y palabras clave en español e inglés; índices general/figuras/tablas; secciones completas y anexo IA | 08 |
+| 4 | Protección de información personal; la consigna menciona Ley 25.326 | 01, 04, 05; citar requisito, sin emitir dictamen legal |
+| 5.2.1 | Entrada, objetivo, criterio a optimizar, teoría, costo y supuestos de cada modelo | Roadmap y teoría; 02–04 |
+| 5.2.2 | Baseline más al menos dos candidatos; selección experimental | 02–04 |
+| 5.3 | Pipeline, CV, tuning sin test, semillas, entorno y regeneración completa | 01–04 |
+| 5.4 | Métricas justificadas, media/desvío CV, estadística cuando corresponda, test único y contraste equivalente | 03–04 |
+| 5.5–5.6 | Errores, interpretabilidad, EDA, curvas apropiadas y figuras interpretadas | 01, 03, 04 |
+| 5.7–5.8 | Ética, despliegue conceptual, monitoreo, discusión y límites | 04–05 |
+| 7.1 | PDF A4, márgenes 2,5 cm, Arial/Times 11–12 pt, interlineado 1,15–1,5, numeración; 20–30 páginas orientativas sin anexos; APA 7 o IEEE consistente | 05; se propone IEEE |
+| 7.1 | Carátula con legajos/docentes/fecha; resumen ≤250 palabras y palabras clave en español e inglés; índices general/figuras/tablas; secciones completas y anexo IA | 05 |
 | 7.2 | Repositorio accesible a cátedra o ZIP; resultados regenerables | Todos; última versión anterior a entrega |
-| 7.3 | Defensa [15] minutos + [10] preguntas; ambos exponen y dominan todo | 08; confirmar tiempos entre corchetes |
-| 7.4 | Nombre `TFI_IA2_Quiros_Andruszyszyn`, sin tildes/espacios; plataforma entre corchetes | 08 |
-| 8 | ≥6, ningún criterio insuficiente, defensa individual; única reentrega en 5 días hábiles | 08; organizar revisión por rúbrica |
-| 9 | Citas, comprensión del código, declaración obligatoria de IA y resultados verificables | Registro de IA desde 00; anexo en 08 |
-| 10 | Posible ejecución y reproducción en defensa | 08; ensayo en entorno limpio |
+| 7.3 | Defensa [15] minutos + [10] preguntas; ambos exponen y dominan todo | 05; confirmar tiempos entre corchetes |
+| 7.4 | Nombre `TFI_IA2_Quiros_Andruszyszyn`, sin tildes/espacios; plataforma entre corchetes | 05 |
+| 8 | ≥6, ningún criterio insuficiente, defensa individual; única reentrega en 5 días hábiles | 05; organizar revisión por rúbrica |
+| 9 | Citas, comprensión del código, declaración obligatoria de IA y resultados verificables | Registro de IA desde 00; anexo en 05 |
+| 10 | Posible ejecución y reproducción en defensa | 05; ensayo en entorno limpio |
 
 Ponderaciones de la rúbrica: análisis 15 %, fundamento/modelos 20 %, implementación/reproducibilidad 20 %, evaluación 20 %, visualización/interpretabilidad/ética 10 %, comunicación 15 %.
 
@@ -108,13 +108,21 @@ Consulta web del 09/10/2026. Enlaces a documentación oficial o investigación p
 
 La [ficha de Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database) corresponde al enlace [46] del TFC. La consulta web no devolvió cuerpo legible: **versión, licencia, disponibilidad de metadatos y descarga siguen pendientes de verificación** en 01. Las cantidades históricas provienen del TFC, no de una descarga actual. No se descargó el dataset.
 
+## Alcance bibliográfico tras la simplificación
+
+Se conserva la investigación realizada; no se reinicia búsqueda bibliográfica. E03/E05 sustentan HOG; E06 SVM lineal; E07 RF; E01/E02/E11/E12/E14 el protocolo. E20 solo sustenta McNemar condicionado a predicciones pareadas y supuestos. E13 permite estudiar importancia por permutación si aporta una explicación sencilla.
+
+E04 (LBP), E08 (KNN), E09 (logística), E10 (PCA) y E17–E19 (estadística alternativa) quedan como **consulta complementaria**, sin tareas experimentales comprometidas. Que una referencia cubra RBF o búsqueda aleatoria no habilita incorporarlos al núcleo. PCA solo se reconsiderará ante problema medido y decisión explícita.
+
+La secuencia vigente es 00 análisis, 01 datos/EDA, 02 HOG/baseline, 03 modelos/CV, 04 tuning/evaluación/interpretación y 05 informe/defensa. El [archivo histórico](archivo/planificacion_inicial/README.md) no contiene instrucciones activas. Las fuentes primarias, D01–D08 y E01–E20 conservan su valor y atribución.
+
 ## Control realizado en esta etapa
 
 - Lectura de fuentes primarias y contraste de anexos: realizado.
 - Reconstrucción de cuatro datasets y doce pruebas: realizada documentalmente, con discrepancias abiertas.
-- Plan experimental, teoría, baseline, dos candidatos principales y alternativas: documentados.
-- Sprints 00–08: redactados, **no ejecutados**; todos conservan tareas pendientes.
+- Plan simplificado: HOG compartido, B0 DummyClassifier, C1 SVM lineal y C2 Random Forest; teoría principal y complementaria separadas.
+- Seis sprints activos 00–05: redactados, **no iniciados**; nueve planes originales archivados sin ejecutar.
 - Resultados nuevos, entrenamiento, tuning y conclusiones experimentales: inexistentes.
-- Verificación estructural y de enlaces locales: realizada antes del commit de planificación; 15 archivos Markdown, nueve sprints con 17 secciones obligatorias y entre 6 y 8 preguntas cada uno, 60 preguntas en teoría, 28 en comparativa, 18 secciones comparativas y dos diagramas comparativos. Sin enlaces locales rotos ni cercos de código desbalanceados. El cierre Git se informa con SHA en la entrega, sin introducir un segundo commit circular.
+- Auditoría correctiva: 13 documentos vigentes (incluido el índice del archivo) con enlaces locales y cercos de código verificados; seis sprints con exactamente doce secciones y tareas sin marcar. Los nueve planes archivados son idénticos byte por byte a sus originales. Se conservaron sin cambios las secciones históricas 1–8 del roadmap, las discrepancias D01–D08 y las veinte referencias E01–E20; la comparativa mantiene 18 secciones y dos diagramas. Se revisó la cobertura de la consigna y la coherencia de HOG, candidatos, grillas y test. El SHA se informa al cerrar este sprint documental.
 
 La revisión documental no valida clínicamente el sistema ni confirma hipótesis de desempeño. La aprobación de cada sprint se registra solamente cuando existan sus evidencias reales.
