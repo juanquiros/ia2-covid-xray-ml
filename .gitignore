@@ -1,0 +1,18 @@
+# Datos y artefactos locales: conservar instrucciones y manifiestos publicables.
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.env
+.env.*
+!.env.example
+data/raw/
+data/processed/
+models/
+tmp/
+output/
+*.h5
+*.joblib
+*.pkl
+# No publicar documentos fuente académicos sin verificar permisos.
+docs/fuentes_locales/
