@@ -1,0 +1,20 @@
+{
+  "dataset": "tawsifurrahman/covid19-radiography-database",
+  "version": 5,
+  "retrieved_date": "2026-11-02",
+  "url": "https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database",
+  "api_download": "https://www.kaggle.com/api/v1/datasets/download/tawsifurrahman/covid19-radiography-database",
+  "license_label": "Data files © Original Authors",
+  "access_use": "Academic/Non-Commercial Use",
+  "metadata_columns": [
+    "FILE NAME",
+    "FORMAT",
+    "SIZE",
+    "URL"
+  ],
+  "explicit_patient_id_available": false,
+  "example_path": "NORMAL/Normal-1224.png",
+  "example_is_development": true,
+  "model_sha256": "d0919816317cf3e33c40da566632721092eea5813b7ca78372e8376dd6f70511",
+  "model_size_bytes": 316313
+}

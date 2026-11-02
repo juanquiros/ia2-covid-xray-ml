@@ -1,6 +1,7 @@
 # Datos y artefactos locales: conservar instrucciones y manifiestos publicables.
 .venv/
 __pycache__/
+.pytest_cache/
 *.py[cod]
 .ipynb_checkpoints/
 .env

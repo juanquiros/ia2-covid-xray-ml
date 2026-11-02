@@ -1,6 +1,6 @@
 # Ejecución vigente del TFI
 
-**Estado al 09/10/2026: seis sprints no iniciados.** Este índice reemplaza los nueve planes [archivados](../archivo/planificacion_inicial/README.md). El sprint correctivo únicamente simplificó documentación; no ejecutó análisis operativo, descarga, HOG ni entrenamiento.
+**Estado al 02/11/2026: seis sprints académicos sin cierre.** Este índice reemplaza los nueve planes [archivados](../archivo/planificacion_inicial/README.md). El sprint correctivo original fue documental. La solicitud posterior de **00-A** autorizó un prototipo preliminar HOG + RF y Dummy, ya implementado con CV exploratoria real: [avance](../AVANCE_2026-11-02.md) y [registro](../REGISTRO_EJECUCION.md). No reemplaza los cierres 00–05.
 
 Núcleo: radiografía → grises/128×128 → HOG fijo (9 orientaciones, celdas 8×8, bloques 2×2, L2-Hys) → **C1 StandardScaler + SVM lineal** o **C2 Random Forest**. **B0 DummyClassifier most_frequent** es la única baseline. No hay otros descriptores o candidatos programados.
 
@@ -21,4 +21,6 @@ Repositorio: `juanquiros/ia2-covid-xray-ml`, rama `main`. Antes de modificar, ve
 
 El test se reserva mediante manifiesto, sin mecanismos de bloqueo. 04 fija la selección y comparadores antes de evaluarlo una vez; interpretar errores no autoriza ajustar de nuevo. Estadística: media/desvío CV y McNemar solo si corresponde. 05 usa resultados existentes.
 
-**Próximo:** solicitar 00; no ha comenzado. Pendientes humanos: revisión y comprensión de ambos integrantes; datos administrativos para carátula; fecha/plataforma/tiempos de cátedra; acceso, licencia y comparabilidad de datos en 01, y autorización de sustitución si corresponde.
+**Próximo académico:** cerrar la revisión de 00; no se ha acreditado su cierre. Reutilizar el código de 00-A donde corresponda sin marcar automáticamente 01–03 como completos. Pendientes humanos: revisión y comprensión de ambos integrantes; datos administrativos para carátula; fecha/plataforma/tiempos de cátedra; auditoría integral y comparabilidad de datos en 01, y autorización de sustitución si corresponde.
+
+Random Forest es la solución principal propuesta; SVM se comparará posteriormente. La decisión académica final permanece basada en evidencia. Las tareas técnicas anticipadas de 00-A se registran aparte; ninguna casilla de los seis planes se marca sin verificar todo su criterio.

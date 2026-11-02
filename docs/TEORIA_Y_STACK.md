@@ -1,6 +1,6 @@
 # Teoría y stack para estudiar y defender el TFI
 
-**Equipo:** Juan Quirós y Andruszyszyn. **Estado:** material de estudio y diseño, 09/10/2026; no hay experimentos propios. Las decisiones operativas se mantienen en [Roadmap](ROADMAP_TFI.md). La evidencia del TFC, la consigna y las referencias E01–E20 se identifican en [Fuentes](FUENTES_Y_TRAZABILIDAD.md).
+**Equipo:** Juan Quirós y Andruszyszyn. **Estado:** material actualizado el 02/11/2026; existe un piloto preliminar RF/Dummy documentado en [Avance](AVANCE_2026-11-02.md). RF es la propuesta principal y SVM la comparación posterior, sin elección académica definitiva anticipada. Las decisiones operativas se mantienen en [Roadmap](ROADMAP_TFI.md). La evidencia del TFC, la consigna y las referencias E01–E20 se identifican en [Fuentes](FUENTES_Y_TRAZABILIDAD.md).
 
 Este material explica cómo una radiografía se convierte en un vector, cómo se aprende una regla de clasificación y cómo comprobar si funciona sobre datos que no participaron en su construcción. Los ejemplos numéricos son **didácticos**, salvo cuando se indica explícitamente que proceden del TFC. No anticipan resultados del equipo.
 
@@ -156,7 +156,7 @@ Se calculan diferencias horizontales y verticales, `gx` y `gy`; magnitud `sqrt(g
 
 ### Ejemplo y dimensiones propuestas [C]
 
-En una radiografía, contornos de costillas o márgenes del tórax generan gradientes; también los textos laterales. Con 128×128 píxeles, celdas 8×8, bloques 2×2 y 9 orientaciones: 16×16 celdas, 15×15 bloques y `15×15×2×2×9 = 8100` features. Es un cálculo de diseño, no extracción realizada.
+En una radiografía, contornos de costillas o márgenes del tórax generan gradientes; también los textos laterales. Con 128×128 píxeles, celdas 8×8, bloques 2×2 y 9 orientaciones: 16×16 celdas, 15×15 bloques y `15×15×2×2×9 = 8100` features. Esta longitud se comprobó en 00-A con imágenes reales y pruebas automatizadas.
 
 **Parámetros:** resolución, orientations, pixels_per_cell, cells_per_block, block_norm; fijar explícitamente L2-Hys y transform_sqrt desactivado inicialmente. No depender de defaults de una biblioteca que pueden diferir del diseño.
 
@@ -324,7 +324,7 @@ Es un marco del ciclo de vida de ML con atención explícita a riesgos y calidad
 
 ## 20. Stack recomendado
 
-No se fijan versiones sin probar compatibilidad; sprint 01 construirá el entorno. Cada herramienta resuelve un componente concreto.
+00-A probó y fijó el entorno mínimo en requirements.txt; sprint 01 lo revisará para la ejecución académica completa. Cada herramienta resuelve un componente concreto.
 
 | Elemento | Qué es / uso y componente dependiente | Por qué elegirlo y alternativa |
 |---|---|---|
@@ -570,4 +570,4 @@ Las respuestas cortas son un punto de partida: ambos integrantes deberán amplia
 | 57 | ¿Qué harían si otro modelo gana en test? | Informarlo sin cambiar selección; una revisión exigiría un nuevo protocolo/test independiente. | Test único |
 | 58 | ¿Qué pasa si nadie supera la baseline? | Se reporta el resultado, se auditan fallos y se discuten límites sin inventar mejoras. | Integridad |
 | 59 | ¿Cómo declaran uso de IA? | Herramienta/versión conocida, etapa, finalidad y verificación en el anexo exigido. | Autoría |
-| 60 | ¿Qué se completó en esta etapa? | Lectura, investigación y planificación; ningún sprint ni entrenamiento propio. | Estado real |
+| 60 | ¿Qué se completó en esta etapa? | Planificación y prototipo 00-A RF/Dummy; los sprints académicos 00–05 y la evaluación final no están cerrados. | Estado real |

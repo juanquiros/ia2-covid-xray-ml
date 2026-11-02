@@ -1,6 +1,6 @@
 # Fuentes, trazabilidad y control de la planificación
 
-Fecha de consulta: **09/10/2026**. Este registro permite distinguir evidencia documental de decisiones propias. Las instrucciones operativas provienen del texto solicitado por el usuario; el TFC es un objeto de estudio y la consigna aporta requisitos académicos. Ninguno habilita ejecutar ahora experimentos ni publicar datos personales.
+Consulta documental inicial: **09/10/2026**. Este registro distingue evidencia documental de decisiones propias. Las instrucciones operativas provienen del usuario; el TFC es objeto de estudio y la consigna aporta requisitos académicos. La solicitud posterior de 00-A habilitó un piloto y el uso de la misma base pública, sin autorizar publicación de datos personales.
 
 ## Convenciones
 
@@ -10,7 +10,7 @@ Fecha de consulta: **09/10/2026**. Este registro permite distinguir evidencia do
 - **[D] Hipótesis:** afirmación por contrastar en experimentos futuros.
 - **[E] Bibliografía adicional:** fundamento externo; nunca reemplaza una afirmación sobre lo que hizo el TFC.
 
-Los títulos del roadmap indican el tipo de contenido. Los cálculos sobre tablas publicadas se identifican como reconstrucción documental, nunca como métricas de un modelo nuestro. Todos los resultados experimentales propios están **pendientes**.
+Los títulos del roadmap indican el tipo de contenido. Los cálculos sobre tablas publicadas se identifican como reconstrucción documental, nunca como métricas de un modelo nuestro. Los resultados definitivos están **pendientes**; el piloto real 00-A se informa separadamente en [Avance](AVANCE_2026-11-02.md).
 
 ## Fuentes primarias locales
 
@@ -106,7 +106,7 @@ Consulta web del 09/10/2026. Enlaces a documentación oficial o investigación p
 | E19 | [SciPy, Wilcoxon](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html) | Diferencias pareadas, simetría, ceros y empates |
 | E20 | [statsmodels, McNemar](https://www.statsmodels.org/stable/generated/statsmodels.stats.contingency_tables.mcnemar.html) | Tabla de discordancias; alternativa exacta binomial |
 
-La [ficha de Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database) corresponde al enlace [46] del TFC. La consulta web no devolvió cuerpo legible: **versión, licencia, disponibilidad de metadatos y descarga siguen pendientes de verificación** en 01. Las cantidades históricas provienen del TFC, no de una descarga actual. No se descargó el dataset.
+La [ficha de Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database) corresponde al enlace [46] del TFC. La consulta inicial del 09/10 no devolvió cuerpo legible y no descargó datos. El 02/11 se verificaron metadatos y se descargó la versión 5 para 00-A, como se detalla al final. Las cantidades históricas siguen atribuidas al TFC, sin corregirlas con la versión actual.
 
 ## Alcance bibliográfico tras la simplificación
 
@@ -116,7 +116,7 @@ E04 (LBP), E08 (KNN), E09 (logística), E10 (PCA) y E17–E19 (estadística alte
 
 La secuencia vigente es 00 análisis, 01 datos/EDA, 02 HOG/baseline, 03 modelos/CV, 04 tuning/evaluación/interpretación y 05 informe/defensa. El [archivo histórico](archivo/planificacion_inicial/README.md) no contiene instrucciones activas. Las fuentes primarias, D01–D08 y E01–E20 conservan su valor y atribución.
 
-## Control realizado en esta etapa
+## Control histórico de la etapa documental · 09/10/2026
 
 - Lectura de fuentes primarias y contraste de anexos: realizado.
 - Reconstrucción de cuatro datasets y doce pruebas: realizada documentalmente, con discrepancias abiertas.
@@ -126,3 +126,11 @@ La secuencia vigente es 00 análisis, 01 datos/EDA, 02 HOG/baseline, 03 modelos/
 - Auditoría correctiva: 13 documentos vigentes (incluido el índice del archivo) con enlaces locales y cercos de código verificados; seis sprints con exactamente doce secciones y tareas sin marcar. Los nueve planes archivados son idénticos byte por byte a sus originales. Se conservaron sin cambios las secciones históricas 1–8 del roadmap, las discrepancias D01–D08 y las veinte referencias E01–E20; la comparativa mantiene 18 secciones y dos diagramas. Se revisó la cobertura de la consigna y la coherencia de HOG, candidatos, grillas y test. El SHA se informa al cerrar este sprint documental.
 
 La revisión documental no valida clínicamente el sistema ni confirma hipótesis de desempeño. La aprobación de cada sprint se registra solamente cuando existan sus evidencias reales.
+
+## Verificación posterior · 02/11/2026
+
+Se descargó la misma base pública por la API de Kaggle tras indicación del usuario: versión 5, actualizada en origen el 19/03/2022, con 3616 COVID y 10192 normales. La diferencia con los 3615 COVID del TFC se mantiene explícita. La descripción indica uso académico/no comercial y la etiqueta de licencia es «Data files © Original Authors»; no se redistribuye el dataset. Los metadatos de ambas clases contienen FILE NAME, FORMAT, SIZE y URL, sin patient_id explícito. Se revisó ese esquema y se auditaron duplicados SHA-256; los nombres de archivo no prueban independencia de pacientes. Detalle de versión, SHA, muestra y exclusiones en [procedencia del piloto](../reports/piloto_2026-11-02/README.md).
+
+La fuente solicita citar M. E. H. Chowdhury et al., «Can AI help in screening Viral and COVID-19 pneumonia?», IEEE Access, 2020, pp. 132665–132676 ([artículo](https://ieeexplore.ieee.org/document/9144185)), y T. Rahman et al., «Exploring the Effect of Image Enhancement Techniques on COVID-19 Detection using Chest X-ray Images», Computers in Biology and Medicine, 2021 ([DOI](https://doi.org/10.1016/j.compbiomed.2021.104319)). Se conservarán estas atribuciones en el informe.
+
+Para implementar se consultaron las API oficiales de [HOG](https://scikit-image.org/docs/stable/api/skimage.feature.html#skimage.feature.hog), [RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) y [StratifiedGroupKFold](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedGroupKFold.html). Las versiones efectivamente ejecutadas constan en requirements.txt y summary.json; no se infieren de la versión de una página web.

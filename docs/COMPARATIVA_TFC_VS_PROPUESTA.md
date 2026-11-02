@@ -1,6 +1,6 @@
 # Comparativa entre el TFC original y nuestra propuesta
 
-**Integrantes:** Juan Quirós y Andruszyszyn. **Fecha:** 09/10/2026. **Estado:** documento de planificación y estudio; nuestra alternativa **todavía no fue implementada**. No se descargó el dataset, no se entrenaron candidatos y no hay métricas propias.
+**Integrantes:** Juan Quirós y Andruszyszyn. **Actualización:** 02/11/2026. Existe un piloto HOG + Random Forest y Dummy sobre 200 imágenes reales de desarrollo. SVM, tuning y evaluación final siguen pendientes. Las métricas exploratorias del [avance](AVANCE_2026-11-02.md) no equivalen al test del TFC. RF es la propuesta principal, sin predeterminar la selección académica definitiva.
 
 **Convención:** [A] significa evidencia reportada por el TFC, [B] requisito de la consigna, [C] diseño o análisis propio y [D] hipótesis pendiente de experimentación. Una cifra del TFC no implica que hayamos reproducido su ejecución. Sus páginas y discrepancias se registran en [Fuentes y trazabilidad](FUENTES_Y_TRAZABILIDAD.md).
 
@@ -10,7 +10,7 @@ Este documento acompaña al [Roadmap](ROADMAP_TFI.md), al [material de estudio](
 
 Comparar permite entender qué aporta una alternativa y qué evidencia necesitaríamos para sostenerlo. La consigna no pide reemplazar una biblioteca por otra: exige otra solución fundamentada y seleccionada mediante experimentos [B, TFI §5.2]. Por eso separaremos tres preguntas: cómo representa cada enfoque la imagen, cómo aprende la clasificación y cómo se evalúa su resultado.
 
-El TFC de Vega Lencina y Armoa, dirigido por Karina Eckert en 2023, ya tiene una CNN y resultados publicados [A]. Nosotros tenemos un diseño clásico y un protocolo por ejecutar [C]. Una comparación honesta puede identificar ventajas potenciales y límites actuales sin declarar que la alternativa será mejor.
+El TFC de Vega Lencina y Armoa, dirigido por Karina Eckert en 2023, ya tiene una CNN y resultados publicados [A]. Nosotros tenemos un diseño clásico, un piloto RF/Dummy y un protocolo académico aún por completar [C]. Una comparación honesta puede identificar ventajas potenciales y límites actuales sin declarar que la alternativa será mejor.
 
 # 2. Problema común
 
@@ -50,7 +50,7 @@ El recorrido es **radiografía → grises y resize 128×128 → HOG fijo → cla
 
 LBP, PCA, KNN, logística, RBF y SHAP quedan fuera del experimento inicial. La teoría complementaria explica sus ideas sin programar tareas. PCA solo se reconsiderará ante un problema concreto medido de memoria, tiempo, dimensionalidad o convergencia y una decisión explícita previa; no hay ablación prevista.
 
-La representación común evita cambiar simultáneamente descriptor y clasificador. La comparación incluye el scaler necesario para C1. **No sabemos** qué candidato tendrá mejor F1 macro ni si superará a la CNN: no hay modelos entrenados ni métricas propias.
+La representación común evita cambiar simultáneamente descriptor y clasificador. La comparación incluye el scaler necesario para C1. **No sabemos** qué candidato tendrá mejor F1 macro ni si superará a la CNN: solo hay métricas preliminares RF/Dummy, sin comparación completa con SVM ni test.
 
 # 5. Comparación conceptual
 
@@ -141,7 +141,7 @@ flowchart TD
     K --> L[Métricas, errores e interpretación del elegido]
 ```
 
-El HOG es idéntico para ambos candidatos. B0 participa en los mismos folds y evaluación pero ignora la imagen. El split se registra en un manifiesto sencillo; no requiere software de bloqueo. Ningún nodo representa trabajo ya ejecutado.
+El HOG es idéntico para ambos candidatos. B0 participa en los mismos folds y evaluación pero ignora la imagen. El split se registrará en un manifiesto sencillo; no requiere software de bloqueo. 00-A anticipó preprocesamiento, HOG y CV inicial RF/Dummy; SVM, tuning, selección definitiva y test siguen pendientes.
 
 # 9. Comparación metodológica
 
@@ -165,7 +165,7 @@ En **04** se aplica la grilla de C={0.1,1,10} y RF con n_estimators={100,200}, m
 | Recursos | Hardware y parámetros de CNN documentados | Hardware, tamaño del modelo y complejidad general; RAM opcional |
 | Explicaciones | Revisión profesional de fallos | Coeficientes SVM o importancia RF del elegido y errores descriptivos |
 
-Todos nuestros valores están **pendientes**. No llenar tablas con ceros para simular ausencia de error o costo. No comparar AUC propia con accuracy del TFC: describen propiedades distintas.
+Los valores de evaluación definitiva están **pendientes**; el piloto de 00-A se informa separadamente. No llenar tablas con ceros para simular ausencia de error o costo. No comparar AUC propia con accuracy del TFC: describen propiedades distintas.
 
 Para McNemar necesitamos dos predicciones sobre cada misma unidad independiente y etiquetas comunes; 79,47 % no aporta esos pares. No se programan pruebas sobre cinco folds solapados como si fueran independientes. Si no hay datos equivalentes, la comparación con CNN será descriptiva y McNemar se limitará a C1 frente a C2 solo si los pares y supuestos lo permiten.
 
@@ -275,7 +275,7 @@ Ambos siguen siendo Machine Learning y usan datos etiquetados. Compartir el prob
 | 25 | ¿La CNN fue mejor que el médico? | No puede afirmarse por 41/52 frente a 37/49; muestras/abstenciones y tamaño limitan la comparación. |
 | 26 | ¿Qué significa mayor reproducibilidad hoy? | Una intención materializada en planes; se comprobará con entorno, manifiestos, código y regeneración futura. |
 | 27 | ¿Qué pasa si gana otro comparador en test? | Se reporta, pero la selección previa no se cambia; cualquier mejora exige nuevo protocolo. |
-| 28 | ¿Qué resultado tiene nuestra propuesta ahora? | Ninguno experimental: solo investigación y documentación. |
+| 28 | ¿Qué resultado tiene nuestra propuesta ahora? | Piloto RF/Dummy en desarrollo; evaluación final y comparación con SVM pendientes. |
 
 # 18. Resumen de una página
 
@@ -287,4 +287,4 @@ El TFC de Vega Lencina y Armoa, de 2023, desarrolló una CNN para clasificar rad
 
 ## NUESTRA PROPUESTA EN 1 MINUTO
 
-Proponemos estudiar la misma tarea binaria con características explícitas y Machine Learning clásico. HOG resumirá gradientes con una configuración fija y compartida por SVM lineal y Random Forest, acompañados por DummyClassifier como baseline. Reservaremos test y seleccionaremos mediante cinco folds y una grilla pequeña en desarrollo; el scaler de SVM se ajustará dentro de cada train. Tras registrar la decisión, evaluaremos test una vez y describiremos métricas, errores, tiempos aproximados, tamaño e interpretación del elegido. No sabemos todavía si superará a la CNN: la propuesta no está implementada. Queremos obtener un estudio reproducible que explique qué alternativa funciona bajo las condiciones evaluadas y cuáles son sus límites. El 79,47 % original es referencia histórica, no promesa de rendimiento ni único criterio de éxito. Ambos integrantes deberán poder defender cada decisión.
+Proponemos estudiar la misma tarea binaria con características explícitas y Machine Learning clásico. HOG resume gradientes con una configuración fija; Random Forest es la propuesta principal y SVM lineal la alternativa posterior, con DummyClassifier como baseline. Existe un piloto real RF/Dummy, pero falta completar la evaluación académica. Reservaremos test y compararemos mediante cinco folds y una grilla pequeña en desarrollo; el scaler de SVM se ajustará dentro de cada train. Tras registrar la selección, evaluaremos test una vez y describiremos métricas, errores, costo e interpretación. No sabemos todavía si superará a la CNN. Queremos explicar qué alternativa funciona bajo las condiciones evaluadas y cuáles son sus límites. El 79,47 % original es referencia histórica, no promesa ni único criterio de éxito. Ambos integrantes deberán poder defender cada decisión.

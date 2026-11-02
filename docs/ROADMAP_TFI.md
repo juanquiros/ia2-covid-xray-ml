@@ -1,8 +1,8 @@
 # Roadmap del TFI de Inteligencia Artificial II
 
-**Equipo:** Juan Quirós y Andruszyszyn. **Fecha:** 09/10/2026. **Estado:** planificación previa a sprint 00; ninguna implementación o experimentación propia ejecutada.
+**Equipo:** Juan Quirós y Andruszyszyn. **Plan base:** 09/10/2026. **Actualización:** 02/11/2026. Sprint preliminar 00-A implementado y evaluado con datos reales de desarrollo; sprints 00–05 sin cierre. Véase [avance](AVANCE_2026-11-02.md).
 
-Este proyecto estudiará si características explícitas de radiografías permiten construir una alternativa clásica defendible a la CNN del TFC de Vega Lencina y Armoa (2023). El núcleo compara **HOG + StandardScaler + SVM lineal** con **HOG + Random Forest**, usando **DummyClassifier most_frequent** como única baseline. La elección final dependerá de validación cruzada; no existe un ganador anticipado.
+Este proyecto estudiará si características explícitas de radiografías permiten construir una alternativa clásica defendible a la CNN del TFC de Vega Lencina y Armoa (2023). **HOG + Random Forest** es la propuesta principal del prototipo; **HOG + StandardScaler + SVM lineal** permanece como alternativa posterior, con **DummyClassifier most_frequent** como baseline. La selección académica definitiva dependerá de resultados, sin favorecer artificialmente a RF.
 
 Leer junto con [Teoría y stack](TEORIA_Y_STACK.md), [Comparativa pedagógica](COMPARATIVA_TFC_VS_PROPUESTA.md), [Fuentes y trazabilidad](FUENTES_Y_TRAZABILIDAD.md) y [Ejecución](ejecucion/README.md). Las marcas **[A] TFC**, **[B] consigna**, **[C] propuesta** y **[D] hipótesis** separan evidencia y decisiones. [E] remite a bibliografía adicional registrada en Fuentes. Citas TFC: páginas PDF/impresas, no páginas de un artículo previo.
 
@@ -192,7 +192,7 @@ El objetivo es formalizar entradas y etiquetas, implementar una baseline y dos c
 | C1 | HOG → StandardScaler → LinearSVC(C=1) | Frontera lineal regularizada sobre el vector HOG |
 | C2 | HOG → RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_leaf=1) | Reglas no lineales sobre el mismo vector; sin escalado necesario |
 
-HOG: **128×128**, `orientations=9`, `pixels_per_cell=(8,8)`, `cells_per_block=(2,2)`, `block_norm="L2-Hys"`, `transform_sqrt=False`. Produce `15×15×2×2×9=8100` atributos. Es cálculo de diseño, no extracción ejecutada. Se fijarán rango, tipo, interpolación y tratamiento de aspecto en 01; se implementarán una sola vez en 02. No hay búsqueda de configuraciones HOG.
+HOG: **128×128**, `orientations=9`, `pixels_per_cell=(8,8)`, `cells_per_block=(2,2)`, `block_norm="L2-Hys"`, `transform_sqrt=False`. Produce `15×15×2×2×9=8100` atributos, comprobados en el prototipo 00-A. Se implementaron grises, normalización por rango del tipo, float32 y resize bilineal directo con antialiasing; 01–02 revisarán y reutilizarán ese contrato para el protocolo académico. No hay búsqueda de configuraciones HOG.
 
 LinearSVC usará regularización L2, pérdida squared_hinge y `class_weight=None`; registrar solver/tolerancia/max_iter y atender convergencia sin ocultar avisos. RF mantiene `max_features="sqrt"`, bootstrap y `class_weight=None`; seed 42 en operaciones aleatorias. C1 y C2 reciben la misma información HOG: el scaler de C1 es parte de su pipeline.
 
@@ -200,7 +200,7 @@ LinearSVC usará regularización L2, pérdida squared_hinge y `class_weight=None
 
 ## 11. Datos, EDA y particiones [C]
 
-Se prioriza la base del TFC y una definición comparable a D4. Versión, licencia, disponibilidad, metadatos e IDs de D4 siguen pendientes. No inventar el subconjunto depurado ni repetir limpieza subjetiva para alcanzar una cifra. Si no se recupera el original y se sustituye por un dataset público equivalente, justificar y obtener autorización de cátedra según consigna §4.
+Se prioriza la base del TFC y una definición comparable a D4. 00-A descargó la versión 5 pública para uso académico y revisó metadatos; no se recuperaron IDs de D4 ni identificadores explícitos de pacientes. La auditoría integral sigue pendiente. No inventar el subconjunto depurado ni repetir limpieza subjetiva para alcanzar una cifra. Si se sustituye por otro dataset público equivalente, justificar y obtener autorización de cátedra según consigna §4.
 
 Crear un manifiesto sencillo con ID, ruta relativa, hash, etiqueta, fuente y paciente/grupo cuando exista; agregar partición y fold. La auditoría estructural identifica archivos ilegibles y duplicados exactos por hash antes del split; resolver duplicados/etiquetas contradictorias con una regla documentada. La búsqueda perceptual de casi duplicados queda fuera inicialmente: solo se reconsidera si EDA aporta evidencia concreta.
 
@@ -250,7 +250,7 @@ Figuras mínimas futuras: EDA de desarrollo, comparación CV, matrices y ejemplo
 
 Python, NumPy, pandas, Matplotlib, scikit-image, scikit-learn, venv y Git/GitHub bastan para el núcleo. Jupyter es opcional para EDA; comandos reproducibles sostienen la ejecución. Fijar versiones probadas en 01 y seed 42. SciPy solo si se importa para McNemar exacto; no sumar frameworks de experimentación.
 
-Estructura **futura, todavía no creada**: `src/data.py`, `src/features.py`, `src/models.py`, `src/evaluation.py`; `configs/experimento.json`; `data/manifiesto.csv`; `results/` para CV, predicciones y métricas; `reports/` para figuras/informe; `tests/` para contratos relevantes; `requirements.txt`; `docs/REGISTRO_EJECUCION.md` y `docs/REGISTRO_IA.md`. Mantener scripts y funciones pequeños; pruebas de separación, transformaciones, métricas y carga del modelo. No crear capas vacías.
+Estructura prevista: `src/data.py`, `src/features.py`, `src/models.py`, `src/evaluation.py`; `configs/experimento.json`; `data/manifiesto.csv`; `results/` para CV, predicciones y métricas; `reports/` para figuras/informe; `tests/`, `requirements.txt` y registros de ejecución/IA. **00-A ya implementa data, features, models y el ejecutor mínimo `src/piloto.py`**, con evidencia en `reports/piloto_2026-11-02/`; evaluación académica definitiva y configuración separada siguen pendientes. Mantener funciones pequeñas y reutilizar lo existente, sin crear capas vacías.
 
 El registro breve por sprint contendrá fecha, entradas, decisión, evidencia, limitaciones, comandos y cierre. Versionar manifiestos publicables, configuración y resultados pequeños; excluir datos pesados, identificadores sensibles y credenciales. Declarar IA con herramienta, versión conocida o no informada, propósito y verificación. Reproducibilidad se comprobará con comandos y entorno, no por cantidad de infraestructura.
 
@@ -272,3 +272,7 @@ Discutir privacidad, licencia, sesgo de fuente/población, FP/FN y uso indebido 
 | 05 Informe y defensa | Informe, comparación, ética, despliegue conceptual y ensayo | No iniciado |
 
 Planes y prompts en [Ejecución](ejecucion/README.md). Los nueve planes anteriores son [historial archivado](archivo/planificacion_inicial/README.md). Este sprint correctivo solo revisa documentación; **no inicia 00**. Cada sprint futuro exige su solicitud y el cierre verificable del anterior; no encadenarlos automáticamente.
+
+## Avance preliminar 00-A · 02/11/2026
+
+La solicitud explícita de 00-A habilitó un prototipo previo a cerrar 00–05. Se implementó HOG + RF, baseline, CV exploratoria y predicción individual; no SVM, tuning ni test. Se auditaron hashes de las 13808 imágenes COVID/Normal de la versión 5, se excluyeron 47 copias exactas y se tomaron 100 imágenes únicas por clase con seed 42. Los metadatos revisados no ofrecen patient_id; CV estratificada por imagen es preliminar y conserva ese riesgo residual. Los 200 hashes del piloto quedan destinados a desarrollo y no podrán integrar el futuro test; las demás imágenes no se asignaron ni utilizaron para entrenar/evaluar. Resultados y límites en el [avance](AVANCE_2026-11-02.md). Este trabajo se reutilizará en los sprints académicos, que siguen pendientes de sus criterios completos.

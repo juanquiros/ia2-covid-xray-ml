@@ -1,0 +1,205 @@
+{
+  "archive_sha256": "15f44e7111a74f048a54a41bf699637ffaad51b08a9d4a622ff5596879cb7f2b",
+  "seed": 42,
+  "source_counts": {
+    "NORMAL": 10192,
+    "COVID": 3616
+  },
+  "unique_counts": {
+    "NORMAL": 10191,
+    "COVID": 3570
+  },
+  "selected_per_class": 100,
+  "exact_duplicates": [
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-139.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-137.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2085.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2084.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-21.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-18.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2418.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2416.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2421.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2420.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2423.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2422.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2459.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2458.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2493.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2492.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2667.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2666.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2678.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2677.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2716.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2715.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2717.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2715.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2718.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2715.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2719.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2715.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2773.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2772.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2774.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2772.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-280.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-277.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2805.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2804.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2808.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2807.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2810.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2809.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2811.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2809.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2812.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2809.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2813.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2809.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2823.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2822.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-2942.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-2941.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3141.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3140.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3142.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3140.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3143.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3140.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3144.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3140.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3208.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3207.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-321.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-319.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3212.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3211.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3223.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3222.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3299.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3298.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3374.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3373.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3375.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3373.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3376.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3373.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3403.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3402.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3427.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3426.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3429.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3428.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3489.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3488.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3516.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3515.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3574.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3573.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3591.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3590.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-3599.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-3598.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/COVID/images/COVID-52.png",
+      "retained": "COVID-19_Radiography_Dataset/COVID/images/COVID-49.png"
+    },
+    {
+      "excluded": "COVID-19_Radiography_Dataset/Normal/images/Normal-818.png",
+      "retained": "COVID-19_Radiography_Dataset/Normal/images/Normal-817.png"
+    }
+  ],
+  "test_created_or_evaluated": false,
+  "note": "Excluir los hashes del piloto del futuro test; resto del ZIP no asignado."
+}
