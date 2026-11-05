@@ -1,5 +1,17 @@
 # Registro de ejecución
 
+## 00 · Análisis crítico del TFC · 05/11/2026
+
+**Estado:** cotejo documental realizado. Cierre pendiente de registrar la revisión y confirmación individual de Juan Quirós y Andruszyszyn según el [plan de Sprint 00](ejecucion/SPRINT_00_ANALISIS_TFC.md).
+
+**Punto de partida:** `juanquiros/ia2-covid-xray-ml`, rama `main` en `e77597b`, coincidente con el remoto verificado con `git ls-remote`. El árbol de trabajo estaba limpio. Cambios documentales locales para revisión.
+
+**Evidencia:** se verificaron hashes y se cotejó la consigna de Descargas con la matriz de requisitos. En el TFC se contrastaron los cuatro conjuntos, las doce pruebas, los anexos de la CNN y D01–D08. Se recalcularon las métricas centrales de D4 a partir de la figura 38 y se recontaron los 52 casos de la tabla 30, separando acuerdo de aciertos frente a etiquetas. Se revisaron enlaces y coherencia documental y se ejecutó `git diff --check`. Véanse [Fuentes](FUENTES_Y_TRAZABILIDAD.md) y [Roadmap](ROADMAP_TFI.md).
+
+**Pendientes de datos:** acreditar versión, manifiesto y particiones de D4. Si se adopta un conjunto equivalente, justificarlo y obtener autorización previa de cátedra según TFI §4. La documentación disponible acredita permiso para el piloto 00-A y deja pendiente la autorización de sustitución.
+
+**Alcance ejecutado:** revisión documental y cálculos sobre cifras publicadas. La evidencia exploratoria de 00-A se conserva aparte.
+
 ## 00-A · Primer prototipo funcional · 02/11/2026
 
 **Solicitud:** sprint 00-A adjunto y autorización posterior para usar la misma base pública del TFC. Esta solicitud habilita el avance técnico preliminar antes del cierre académico 00–05. No se eliminó documentación ni se marcaron esos sprints como completos.

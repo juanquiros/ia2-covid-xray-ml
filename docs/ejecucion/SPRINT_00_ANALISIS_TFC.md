@@ -1,6 +1,6 @@
 # Objetivo
 
-Revisar y acordar la reconstrucción del TFC y el alcance simplificado con ambos integrantes. **Estado: no iniciado.** La lectura documental previa no constituye este cierre operativo.
+Revisar y acordar la reconstrucción del TFC y el alcance simplificado con ambos integrantes. **Estado al 05/11/2026: cotejo documental realizado, cierre pendiente.** Falta registrar la revisión y confirmación efectiva de Juan Quirós y Andruszyszyn.
 
 # Por qué lo hacemos
 
@@ -12,21 +12,21 @@ Clasificación supervisada, CNN, feature engineering, etiquetas operativas, CRIS
 
 # Entradas
 
-README, roadmap, teoría, comparativa, fuentes e índice de ejecución vigentes; estado Git y registro del cierre anterior cuando exista. Copias locales TFC-2023.pdf y consigna DOCX con hashes registrados; no copiar esos documentos al repositorio.
+README, roadmap, teoría, comparativa, fuentes e índice de ejecución vigentes; estado Git y registro del cierre anterior cuando exista. Copias locales del TFC en OneDrive y de la consigna de Descargas, identificadas por hash en [Fuentes](../FUENTES_Y_TRAZABILIDAD.md). Ambas se conservan fuera de Git.
 
 # Tareas
 
-- [ ] Contrastar cuatro datasets, doce pruebas, arquitectura, stack y cifras con las fuentes ya localizadas.
-- [ ] Revisar discrepancias D01–D08, fortalezas, limitaciones y denominadores de la consulta profesional.
-- [ ] Confirmar tarea COVID=1 frente a normal=0 y comparación contextual si no se recupera D4 exacto.
-- [ ] Acordar núcleo HOG fijo, B0 DummyClassifier, C1 SVM lineal y C2 RF; cinco folds y test reservado.
-- [ ] Registrar comprensión/revisión real de ambos integrantes y preguntas abiertas; no atribuirles una aprobación que no dieron.
-- [ ] Iniciar registro breve de ejecución y uso de IA, y listar datos administrativos pendientes.
-- [ ] Verificar documentación, actualizar checklist y estado; commit y push del sprint. No iniciar 01.
+- [x] Contrastar cuatro datasets, doce pruebas, arquitectura, stack y cifras con las fuentes ya localizadas.
+- [x] Revisar discrepancias D01–D08, fortalezas, limitaciones y denominadores de la consulta profesional.
+- [x] Documentar COVID=1 frente a normal=0, las evidencias faltantes de D4 y el carácter histórico de la CNN mientras falte equivalencia.
+- [x] Documentar HOG fijo, RF como propuesta principal, SVM lineal con escalado como segundo candidato y `DummyClassifier(strategy="most_frequent")` como línea base. Selección por F1 macro medio en desarrollo, con cinco folds comunes si los datos y grupos lo permiten y test reservado.
+- [ ] Registrar por separado la confirmación de Juan Quirós y Andruszyszyn y las preguntas abiertas de la revisión.
+- [x] Actualizar los registros existentes de ejecución e IA y dejar identificados los pendientes administrativos y de datos.
+- [x] Verificar documentación, enlaces y diff. Dejar los cambios locales listos para revisión. Commit y push requieren solicitud expresa.
 
 # Archivos a crear/modificar
 
-Crear `docs/REGISTRO_EJECUCION.md` y `docs/REGISTRO_IA.md`; corregir documentos existentes solo si aparece evidencia; actualizar este plan y el índice. No crear código ML.
+Actualizar [ejecución](../REGISTRO_EJECUCION.md), [uso de IA](../REGISTRO_IA.md), este plan, el índice y los puntos afectados del README, roadmap, comparativa y fuentes.
 
 # Pruebas
 
@@ -34,14 +34,14 @@ Comprobar citas/páginas, coherencia de totales y métricas documentales, enlace
 
 # Resultados esperados
 
-Base conceptual aceptada por el equipo, críticas sustentadas, alcance único y dudas localizadas. No hay resultados experimentales ni datos descargados.
+Análisis crítico y alcance listos para revisión de ambos integrantes, con los pendientes de D4 identificados. Los resultados de 00-A se conservan como evidencia preliminar separada.
 
 # Criterios de aceptación
 
-- [ ] Tablas y arquitectura históricas verificadas, con discrepancias visibles.
-- [ ] Los dos integrantes revisaron y pueden explicar las decisiones; si falta su revisión, informar cierre pendiente.
-- [ ] Baseline y dos candidatos sin rutas adicionales; matriz académica cubierta.
-- [ ] Registros, checklist y documentación coherentes; commit y push confirmados.
+- [x] Tablas y arquitectura históricas verificadas, con discrepancias visibles.
+- [ ] Registrar la confirmación de cada integrante de que revisó el análisis y puede explicar las decisiones. Pendiente para ambos.
+- [x] Línea base y dos candidatos definidos. Matriz académica cotejada con la consigna.
+- [x] Registros, checklist y documentación coherentes. Diff local verificado.
 
 # Qué debemos saber explicar
 
@@ -58,19 +58,21 @@ Por qué D4 enfrenta COVID a normales, por qué 79,47 % no es un objetivo obliga
 
 # Prompt para Codex
 
+Material operativo interno.
+
 ```text
 Ejecutá únicamente SPRINT_00_ANALISIS_TFC según su plan vigente. Leé primero README.md,
 docs/ROADMAP_TFI.md, docs/TEORIA_Y_STACK.md, docs/COMPARATIVA_TFC_VS_PROPUESTA.md,
 docs/FUENTES_Y_TRAZABILIDAD.md, docs/ejecucion/README.md y el registro de ejecución
-si existe; inspeccioná Git y las instrucciones aplicables. No hay cierre previo de ejecución: la planificación documental no lo reemplaza.
-Conservá HOG fijo, B0 DummyClassifier, C1 SVM lineal con StandardScaler y C2 RF.
+si existe; inspeccioná Git y las instrucciones aplicables. Tomá el piloto 00-A como antecedente y registrá por separado el estado de 00.
+Conservá el alcance técnico documentado arriba y la selección en desarrollo.
 Respetá límites, entradas y orden de tareas de este sprint; los planes archivados
 no son instrucciones activas. No añadas candidatos, descriptores, infraestructura
 ni experimentos opcionales. Ejecutá las pruebas pertinentes y registrá evidencia
 real, decisiones, limitaciones y uso de IA. Si falta intervención humana necesaria,
 no la inventes: explicá el pendiente y avanzá solo en tareas independientes.
 Actualizá documentación, checklist y estado según lo realmente completado.
-Revisá el diff, hacé un commit coherente y push al remoto/rama del proyecto,
-confirmá el resultado y reportá SHA, verificaciones y pendientes.
+Revisá el diff, ejecutá git diff --check e informá verificaciones y pendientes.
+Hacé commit o push solo si el usuario lo solicita expresamente.
 No ejecutes ni inicies el siguiente sprint.
 ```

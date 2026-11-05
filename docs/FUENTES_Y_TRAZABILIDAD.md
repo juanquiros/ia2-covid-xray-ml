@@ -1,6 +1,6 @@
 # Fuentes, trazabilidad y control de la planificación
 
-Consulta documental inicial: **09/10/2026**. Este registro distingue evidencia documental de decisiones propias. Las instrucciones operativas provienen del usuario; el TFC es objeto de estudio y la consigna aporta requisitos académicos. La solicitud posterior de 00-A habilitó un piloto y el uso de la misma base pública, sin autorizar publicación de datos personales.
+Consulta documental inicial **09/10/2026**. Cotejo del Sprint 00 **05/11/2026**. Este registro distingue evidencia documental de decisiones propias. Las instrucciones operativas provienen del usuario; el TFC es objeto de estudio y la consigna aporta requisitos académicos. La solicitud posterior de 00-A habilitó un piloto y el uso de la misma base pública, sin autorizar publicación de datos personales.
 
 ## Convenciones
 
@@ -17,9 +17,9 @@ Los títulos del roadmap indican el tipo de contenido. Los cálculos sobre tabla
 | ID | Documento e identificación | Localizador | SHA-256 |
 |---|---|---|---|
 | TFC | N. I. Vega Lencina y G. S. Armoa, *Modelo basado en redes neuronales convolucionales para el diagnóstico de COVID-19 mediante imágenes de rayos X guiado por CRISP-ML(Q)*, directora Mgter. Karina Eckert, 2023 | `TFC-2023.pdf`, 103 páginas; número impreso coincide con página PDF | `9f98f52deda6bd14999bd2d2d92d46a538597df9e5a9102678ee7694beba3cde` |
-| TFI | *Trabajo Final Integrador (TFI). Análisis crítico de un Trabajo Final de Carrera y desarrollo de una solución alternativa basada en aprendizaje automático*, IA II; equipo docente Winnik Vanina y Héctor Ruidias; publicación 02/10/2026 | `Trabajo Final Integrador (TFI) Consignas.docx`; referencias por sección, sin inventar paginación | `86360af8dfb3b6a3c5ae4f5f823bcb879d216b6304544a986d340a1df1e5ca4a` |
+| TFI | *Trabajo Final Integrador (TFI). Análisis crítico de un Trabajo Final de Carrera y desarrollo de una solución alternativa basada en aprendizaje automático*, IA II; equipo docente Winnik Vanina y Héctor Ruidias; publicación 02/10/2026 | `C:/Users/quiro/Downloads/Trabajo Final Integrador (TFI)(1).docx`, copia de referencia para Sprint 00. Citas por sección | `30777f5b0d80766ea1036e3aee39a7d6bfa06127886bbb825615dca407c4ad4b` |
 
-Ambos archivos se localizaron en el directorio `2026/ia2` de la carpeta académica de OneDrive indicada por el usuario. No estaban dentro del repositorio. No se copian a Git: son referencias locales, no entregables creados por este equipo. Para reproducir la revisión, proporcionar esas copias y verificar sus hashes; si cambian, revisar las citas. Las extracciones y renderizados de trabajo se conservaron fuera del repositorio durante esta planificación.
+Se verificó el TFC en `OneDrive/Facultad - Ingenieria en Informatica/2026/ia2/TFC-2023.pdf`. La planificación inicial usó la copia `Trabajo Final Integrador (TFI) Consignas.docx` de esa misma carpeta, con SHA-256 `86360af8dfb3b6a3c5ae4f5f823bcb879d216b6304544a986d340a1df1e5ca4a`. Los dos DOCX tienen hashes distintos y coinciden en los párrafos y filas de tablas extraídos. Las citas de este sprint remiten a la copia de Descargas indicada arriba. Los originales y los archivos de trabajo de la revisión se mantuvieron fuera del repositorio.
 
 ### Cobertura de lectura realizada
 
@@ -36,7 +36,7 @@ Ambos archivos se localizaron en el directorio `2026/ia2` de la carpeta académi
 | 76–99 | Anexo V: registros de las 20 épocas de cada entrenamiento y gráficos | Diferenciar validación/test; discrepancia de prueba 8 |
 | 100–103 | Tabla de 52 casos y entrevistas | Denominadores, concordancia y contexto del umbral del 75 % |
 
-Se extrajo y revisó texto de las 103 páginas. Se verificaron visualmente tablas, matrices y código decisivos en pp. 43, 44, 47, 50, 53, 57, 69, 72, 73, 75, 100 y 101. Esta lectura documental completa **no ejecuta el sprint 00**, cuyo cierre requerirá la revisión de los integrantes y el registro operativo previsto.
+La lectura inicial cubrió las 103 páginas. En el Sprint 00 se cotejaron los cuatro conjuntos (tabla 2), las particiones declaradas (tabla 3), las doce pruebas (tablas 4–17), la matriz de D4 (figura 38), el código y el resumen de la CNN (anexos I–IV), la discrepancia de prueba 8 (tabla 25 y registro de época 20) y los 52 casos de revisión profesional (tabla 30). El [registro de ejecución](REGISTRO_EJECUCION.md) distingue este cotejo de la confirmación de los integrantes.
 
 ### Discrepancias que deben conservarse
 
@@ -46,8 +46,8 @@ Se extrajo y revisó texto de las 103 páginas. Se verificaron visualmente tabla
 | D02 | P. 33 declara 80/10/10; tabla 3 p. 43 da 1018 por clase para validation y test de D1 | No inventar conteos exactos de train; mostrar diferencia con el 10 % de positivos |
 | D03 | Tabla 3: D2 test 496/496; figura 32 p. 47 suma 495 COVID y 496 normales | Reportar ambas evidencias; manifiestos no disponibles |
 | D04 | Tabla 3: D3 test 361/361; figura 35 p. 50 suma 362/362 | No ocultar divergencia ni reconstruir IDs inexistentes |
-| D05 | Anexos I–II pp. 69,72: tres convoluciones y **dos** MaxPooling; prosa/diagramas pueden inducir tres | Priorizar código y resumen para reconstrucción técnica |
-| D06 | Anexo I p. 68 reescala train/validation; anexo IV p. 75 no reescala test | Inconsistencia confirmada en código publicado; efecto en resultados no demostrado |
+| D05 | La prosa de p. 38 puede ubicar el segundo MaxPooling después de la tercera convolución. La figura 25 (p. 39) y los anexos I–II (pp. 69, 72) lo ubican entre la segunda y la tercera. La figura 26 (p. 40) omite los pooling en el esquema general | Reconstruir tres convoluciones y dos MaxPooling, después de la primera y segunda |
+| D06 | Anexo I p. 68 usa `rescale=1./255` en train/validación. El generador de test del anexo IV p. 75 omite ese ajuste | Inconsistencia confirmada en código publicado; efecto en resultados no demostrado |
 | D07 | Anexo III p. 73 omite reescalado y modo grayscale; modelo p. 72 recibe un canal | Riesgo de incompatibilidad de inferencia; no afirmar qué versión ejecutaron |
 | D08 | Tabla 16 p. 56 y tabla 25 p. 91 repiten cifras de prueba 7 para prueba 8; log época 20 p. 91 da otras | Mantener ambos registros, sin corregir silenciosamente |
 
@@ -58,7 +58,7 @@ No hay evidencia suficiente para afirmar pacientes compartidos entre particiones
 | Sección | Requisito | Documento / sprint de cumplimiento futuro |
 |---|---|---|
 | 4 y 5.1 | TFC asignado, crítica respetuosa y sustentada | Roadmap; 00 |
-| 4 | Dataset público equivalente si falta el original: autorización de cátedra y justificación | 00–01; bloqueo solo de sustitución de datos |
+| 4 | Si los datos originales faltan o resultan insuficientes, un conjunto público equivalente requiere autorización previa de cátedra y justificación en el informe | 00 documenta el requisito. Resolver antes de adoptar el sustituto en 01 |
 | 4 | Protección de información personal; la consigna menciona Ley 25.326 | 01, 04, 05; citar requisito, sin emitir dictamen legal |
 | 5.2.1 | Entrada, objetivo, criterio a optimizar, teoría, costo y supuestos de cada modelo | Roadmap y teoría; 02–04 |
 | 5.2.2 | Baseline más al menos dos candidatos; selección experimental | 02–04 |
@@ -102,11 +102,11 @@ Consulta web del 09/10/2026. Enlaces a documentación oficial o investigación p
 | E15 | [Studer et al., Towards CRISP-ML(Q), preprint](https://arxiv.org/abs/2003.05155) | Seis fases y aseguramiento de calidad; versión publicada 2021, DOI 10.3390/make3020020, también citada en TFC |
 | E16 | [DeGrave, Janizek y Lee, 2021](https://www.nature.com/articles/s42256-021-00338-7) | Evidencia de aprendizaje de atajos en otros sistemas de COVID; motiva auditoría, no demuestra sesgo del TFC |
 | E17 | [Demšar, 2006, JMLR](https://jmlr.org/papers/v7/demsar06a.html) | Comparación de clasificadores entre múltiples datasets; no legitima tratar folds dependientes como datasets |
-| E18 | [Dietterich, 1998, Neural Computation](https://doi.org/10.1162/089976698300017197) | Pruebas aproximadas y diseño 5×2cv; no aplicar t ingenua sobre folds |
+| E18 | [Dietterich, 1998, Neural Computation](https://doi.org/10.1162/089976698300017197) | Pruebas aproximadas y diseño 5×2cv; no aplicar t ingenua sobre folds. Ficha disponible en [PubMed](https://pubmed.ncbi.nlm.nih.gov/9744903/) |
 | E19 | [SciPy, Wilcoxon](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html) | Diferencias pareadas, simetría, ceros y empates |
 | E20 | [statsmodels, McNemar](https://www.statsmodels.org/stable/generated/statsmodels.stats.contingency_tables.mcnemar.html) | Tabla de discordancias; alternativa exacta binomial |
 
-La [ficha de Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database) corresponde al enlace [46] del TFC. La consulta inicial del 09/10 no devolvió cuerpo legible y no descargó datos. El 02/11 se verificaron metadatos y se descargó la versión 5 para 00-A, como se detalla al final. Las cantidades históricas siguen atribuidas al TFC, sin corregirlas con la versión actual.
+La [ficha de Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database/data) identifica la base citada en [46] del TFC. La consulta inicial del 09/10 no devolvió cuerpo legible y no descargó datos. El 02/11 se verificaron metadatos y se descargó la versión 5 para 00-A, como se detalla al final. En 00 se comprobó la ficha de datos de Kaggle y se verificaron referencias bibliográficas por sus fichas o preprints cuando el acceso directo al editor estaba restringido. Las cantidades históricas siguen atribuidas al TFC, sin corregirlas con la versión actual.
 
 ## Alcance bibliográfico tras la simplificación
 
@@ -131,6 +131,6 @@ La revisión documental no valida clínicamente el sistema ni confirma hipótesi
 
 Se descargó la misma base pública por la API de Kaggle tras indicación del usuario: versión 5, actualizada en origen el 19/03/2022, con 3616 COVID y 10192 normales. La diferencia con los 3615 COVID del TFC se mantiene explícita. La descripción indica uso académico/no comercial y la etiqueta de licencia es «Data files © Original Authors»; no se redistribuye el dataset. Los metadatos de ambas clases contienen FILE NAME, FORMAT, SIZE y URL, sin patient_id explícito. Se revisó ese esquema y se auditaron duplicados SHA-256; los nombres de archivo no prueban independencia de pacientes. Detalle de versión, SHA, muestra y exclusiones en [procedencia del piloto](../reports/piloto_2026-11-02/README.md).
 
-La fuente solicita citar M. E. H. Chowdhury et al., «Can AI help in screening Viral and COVID-19 pneumonia?», IEEE Access, 2020, pp. 132665–132676 ([artículo](https://ieeexplore.ieee.org/document/9144185)), y T. Rahman et al., «Exploring the Effect of Image Enhancement Techniques on COVID-19 Detection using Chest X-ray Images», Computers in Biology and Medicine, 2021 ([DOI](https://doi.org/10.1016/j.compbiomed.2021.104319)). Se conservarán estas atribuciones en el informe.
+La fuente solicita citar M. E. H. Chowdhury et al., «Can AI help in screening Viral and COVID-19 pneumonia?», IEEE Access, 2020, pp. 132665–132676 ([artículo](https://ieeexplore.ieee.org/document/9144185), [preprint de los autores](https://arxiv.org/abs/2003.13145)), y T. Rahman et al., «Exploring the Effect of Image Enhancement Techniques on COVID-19 Detection using Chest X-ray Images», Computers in Biology and Medicine, 2021 ([DOI](https://doi.org/10.1016/j.compbiomed.2021.104319)). Se conservarán estas atribuciones en el informe.
 
 Para implementar se consultaron las API oficiales de [HOG](https://scikit-image.org/docs/stable/api/skimage.feature.html#skimage.feature.hog), [RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) y [StratifiedGroupKFold](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedGroupKFold.html). Las versiones efectivamente ejecutadas constan en requirements.txt y summary.json; no se infieren de la versión de una página web.

@@ -1,8 +1,8 @@
 # Roadmap del TFI de Inteligencia Artificial II
 
-**Equipo:** Juan Quirós y Andruszyszyn. **Plan base:** 09/10/2026. **Actualización:** 02/11/2026. Sprint preliminar 00-A implementado y evaluado con datos reales de desarrollo; sprints 00–05 sin cierre. Véase [avance](AVANCE_2026-11-02.md).
+**Equipo:** Juan Quirós y Andruszyszyn. **Plan base:** 09/10/2026. **Actualización:** 05/11/2026. El [Sprint 00](ejecucion/SPRINT_00_ANALISIS_TFC.md) queda pendiente de confirmación de ambos integrantes. La evidencia preliminar de 00-A se mantiene en el [avance](AVANCE_2026-11-02.md).
 
-Este proyecto estudiará si características explícitas de radiografías permiten construir una alternativa clásica defendible a la CNN del TFC de Vega Lencina y Armoa (2023). **HOG + Random Forest** es la propuesta principal del prototipo; **HOG + StandardScaler + SVM lineal** permanece como alternativa posterior, con **DummyClassifier most_frequent** como baseline. La selección académica definitiva dependerá de resultados, sin favorecer artificialmente a RF.
+Este proyecto estudiará si características explícitas de radiografías permiten construir una alternativa clásica defendible a la CNN del TFC de Vega Lencina y Armoa (2023). **HOG + Random Forest** es la propuesta principal del prototipo; **HOG + StandardScaler + SVM lineal** es el segundo candidato, con `DummyClassifier(strategy="most_frequent")` como línea base. La selección final se hará por F1 macro medio en desarrollo.
 
 Leer junto con [Teoría y stack](TEORIA_Y_STACK.md), [Comparativa pedagógica](COMPARATIVA_TFC_VS_PROPUESTA.md), [Fuentes y trazabilidad](FUENTES_Y_TRAZABILIDAD.md) y [Ejecución](ejecucion/README.md). Las marcas **[A] TFC**, **[B] consigna**, **[C] propuesta** y **[D] hipótesis** separan evidencia y decisiones. [E] remite a bibliografía adicional registrada en Fuentes. Citas TFC: páginas PDF/impresas, no páginas de un artículo previo.
 
@@ -31,7 +31,7 @@ El TFC atribuye las 3615 COVID a 2473 de PadChest, 183 de una escuela de medicin
 | D3 | Solo COVID | Normales | 3615 / 3615; **7230** | No. Hacer más específica la clase positiva |
 | D4 | Solo COVID | Normales | 2462 / 2462; **4924** | Sí, revisión manual sin profesional disponible; retirar borrosidad, movimiento, elementos metálicos y errores de colimación |
 
-Fuente: pp. 34–36, tabla 2. D4 conserva el criterio binario de D3 y elimina imágenes de calidad considerada deficiente. El artículo no proporciona en el PDF una lista reproducible de IDs retenidos/excluidos ni reglas cuantitativas de calidad. No podemos reconstruir exactamente el subconjunto con solo estas cantidades.
+Fuente: pp. 34–36, tabla 2. D4 conserva el criterio binario de D3 y elimina imágenes de calidad considerada deficiente. El TFC no proporciona una lista reproducible de IDs retenidos/excluidos ni reglas cuantitativas de calidad. No podemos reconstruir exactamente el subconjunto con solo estas cantidades.
 
 **Interpretación propia [C]:** en D4, NO COVID significa **normal**, no cualquier radiografía negativa para SARS-CoV-2. El modelo no queda evaluado frente a neumonías no COVID ni al conjunto de enfermedades que aparecen en una población clínica. En D1/D2 la ampliación de etiquetas cambia el problema: sus métricas no comparan exactamente la misma tarea que D4. El balance artificial tampoco representa prevalencia real.
 
@@ -46,11 +46,11 @@ P. 33 declara **80 % entrenamiento, 10 % validación, 10 % prueba**. La tabla 3 
 | D3 | 361 / 361 | 361 / 361 | 2893 / 2893 |
 | D4 | 246 / 246 | 246 / 246 | 1970 / 1970 |
 
-Esos train son **cálculos condicionales**, no inventarios confirmados. En D1, 1018 no es el 10 % de 10972: suponiendo las tablas, validation y test son aproximadamente 9,28 % de positivos y 9,99 % de negativos. Además, figura 32 p. 47 suma **495/496** en test D2, y figura 35 p. 50 suma **362/362** en D3; divergen de tabla 3. D4 sí muestra 246/246 en figura 38 p. 53. No existe evidencia para determinar exactamente todos los IDs y conteos efectivos de train/validation/test. La respuesta rigurosa al pedido de exactitud es preservar estas divergencias y solicitar manifiestos en 00–01.
+Esos train son **cálculos condicionales**, no inventarios confirmados. En D1, 1018 no es el 10 % de 10972: suponiendo las tablas, validation y test son aproximadamente 9,28 % de positivos y 9,99 % de negativos. Además, figura 32 p. 47 suma **495/496** en test D2, y figura 35 p. 50 suma **362/362** en D3; divergen de tabla 3. D4 sí muestra 246/246 en figura 38 p. 53. No existe evidencia para determinar exactamente todos los IDs y conteos efectivos de train/validation/test. Los manifiestos originales permitirían resolver estas divergencias.
 
 ## 4. CNN, entrenamiento y stack original [A]
 
-La reconstrucción técnica prioriza anexos I–II, pp. 68–72, frente a simplificaciones de diagramas. La red tiene **tres convoluciones y dos MaxPooling**, no tres pooling.
+La red tiene **tres convoluciones y dos MaxPooling**, después de la primera y la segunda convolución. Lo confirman la figura 25 (p. 39), el código (pp. 68–70) y el resumen del modelo (p. 72).
 
 | Etapa | Configuración | Salida / parámetros |
 |---|---|---|
@@ -62,7 +62,7 @@ La reconstrucción técnica prioriza anexos I–II, pp. 68–72, frente a simpli
 | Conv3 | 64 filtros 2×2, `same`, ReLU | 74×74×64; 16448 |
 | Flatten | Aplanamiento sin aprendizaje | 350464 valores |
 | Dense | 64 neuronas, ReLU | 22429760 |
-| Dropout | Probabilidad 0,5 durante entrenamiento | 64 |
+| Dropout | Probabilidad 0,5 durante entrenamiento | 64 valores, 0 parámetros |
 | Dense salida | 2 neuronas, Softmax | 130 |
 | Total | Todos entrenables | **22454914 parámetros** |
 
@@ -128,19 +128,21 @@ Fuente: tablas 16–17 pp. 56–57. *En prueba 8, tabla 16 y tabla 25 repiten la
 
 ### Resultado principal: prueba 10 de D4
 
-La figura 38 p. 53 contiene, con COVID como positivo, **VP=197, FN=49, FP=52, VN=194**, total 492. Es coherente con 391/492≈79,47 %. Sensibilidad 80,08 %, especificidad 78,86 %, precision positiva 79,12 % y F1 positivo 79,60 %. La especificidad es el recall de la clase NO COVID. Estas son cifras del TFC o cálculos directos de su tabla; no resultados nuestros.
+**[A]** La figura 38 (p. 53) tiene filas reales y columnas predichas, ambas en orden COVID/normal. Con COVID como positivo, **VP=197, FN=49, FP=52, VN=194**. La tabla 13 (p. 53) informa accuracy de test de 0,7947, precision COVID de 0,7912, recall COVID de 0,8008 y F1 COVID de 0,7960. La tabla 16 (p. 56) da 0,8208 en validación.
 
-El TFC atribuye la mejora a depuración (p. 61), pero **[C] esa atribución causal no queda aislada**: cambiaron imágenes, tamaño y posiblemente particiones, con variabilidad aleatoria. Tres ensayos no separan esos efectos. El 75 % considerado viable surge de la entrevista p. 102; es un criterio contextual del profesional, no una certificación clínica ni nuestro umbral de aprobación.
+**[C]** La matriz suma 246 imágenes por clase y 492 en total. La diagonal suma 197 + 194 = 391 aciertos, por lo que 391/492 = 79,4715… %. La especificidad es el recall de normal, 194/246 ≈ 78,86 %.
+
+**[A]** El TFC atribuye la mejora a la depuración (p. 61). **[C]** El diseño no permite aislar ese efecto de los cambios de imágenes, tamaño, posibles diferencias de partición y variabilidad entre entrenamientos. Tres ensayos no separan esos efectos. El 75 % considerado viable surge de la entrevista p. 102; es un criterio contextual del profesional, no una certificación clínica ni nuestro umbral de aprobación.
 
 ## 7. Validación profesional [A] y alcance [C]
 
-Se seleccionaron **52 radiografías del test**, no una cohorte externa, y participó un solo médico, Dr. Osvaldo Luqui, R4 en diagnóstico por imágenes (pp. 43, 58–59; anexo VI pp. 100–101).
+Se seleccionaron **52 radiografías del test**, no una cohorte externa, y participó un solo médico, Dr. Osvaldo Luqui, R4 en diagnóstico por imágenes (pp. 43, 58–59 y tabla 30 del anexo VI, pp. 100–101).
 
-| Comparación | Evidencia original | Lectura correcta |
+| Comparación | Conteos publicados [A] | Cálculo propio [C] |
 |---|---|---|
-| Médico frente a red | 37 coincidencias, 12 discrepancias, 3 indefinidas | 37/49≈75,51 % entre casos clasificables; el texto redondea a 75 %. No dividir por 52 para obtener esa concordancia |
-| Red frente a etiquetas | VP19, VN22, FP6, FN5 | 41/52≈78,85 % de aciertos; 24 positivos y 28 negativos |
-| Médico frente a etiquetas | VP16, VN21, FP4, FN8 | 37/49≈75,51 % entre definidos; abstención 3/52 |
+| Médico frente a red | 37 coincidencias, 12 discrepancias, 3 indefinidas | 37/49≈75,51 % entre casos clasificables. La figura 42 (p. 59) informa 75,5 % |
+| Red frente a etiquetas | VP19, VN22, FP6, FN5 | 41/52≈78,85 % de aciertos. Hay 24 positivos y 28 negativos |
+| Médico frente a etiquetas | VP16, VN21, FP4, FN8 | 37/49≈75,51 % entre definidos. Hubo 3 abstenciones sobre 52 |
 
 Los casos indefinidos son 10, 35 y 39 y tienen etiqueta NO COVID; la red acierta dos de ellos. En los **mismos 49 casos**, la red acierta 39 (reconstrucción documental del anexo). No comparar 41/52 y 37/49 como prueba de superioridad. La coincidencia médico/red tampoco es exactitud frente a etiquetas: ambos pueden equivocarse de la misma manera.
 
@@ -189,8 +191,8 @@ El objetivo es formalizar entradas y etiquetas, implementar una baseline y dos c
 | Ruta | Configuración inicial | Función |
 |---|---|---|
 | B0 | DummyClassifier(strategy="most_frequent") | Control trivial; aprende la clase mayoritaria del train e ignora las features |
-| C1 | HOG → StandardScaler → LinearSVC(C=1) | Frontera lineal regularizada sobre el vector HOG |
-| C2 | HOG → RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_leaf=1) | Reglas no lineales sobre el mismo vector; sin escalado necesario |
+| C1 | HOG → StandardScaler → LinearSVC(C=1) | Segundo candidato, con frontera lineal regularizada |
+| C2 | HOG → RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_leaf=1) | Propuesta principal, con reglas no lineales sobre el HOG sin escalar |
 
 HOG: **128×128**, `orientations=9`, `pixels_per_cell=(8,8)`, `cells_per_block=(2,2)`, `block_norm="L2-Hys"`, `transform_sqrt=False`. Produce `15×15×2×2×9=8100` atributos, comprobados en el prototipo 00-A. Se implementaron grises, normalización por rango del tipo, float32 y resize bilineal directo con antialiasing; 01–02 revisarán y reutilizarán ese contrato para el protocolo académico. No hay búsqueda de configuraciones HOG.
 
@@ -200,7 +202,9 @@ LinearSVC usará regularización L2, pérdida squared_hinge y `class_weight=None
 
 ## 11. Datos, EDA y particiones [C]
 
-Se prioriza la base del TFC y una definición comparable a D4. 00-A descargó la versión 5 pública para uso académico y revisó metadatos; no se recuperaron IDs de D4 ni identificadores explícitos de pacientes. La auditoría integral sigue pendiente. No inventar el subconjunto depurado ni repetir limpieza subjetiva para alcanzar una cifra. Si se sustituye por otro dataset público equivalente, justificar y obtener autorización de cátedra según consigna §4.
+Para acreditar D4 se necesita la versión o copia de origen, el manifiesto de imágenes retenidas y excluidas con etiquetas y criterios de depuración, y la asignación original a train, validación y test. Para comprobar independencia se necesitan identificadores fiables de paciente o grupo. La versión 5 pública usada en 00-A identifica la base, pero no acredita el subconjunto ni sus particiones.
+
+Si D4 no se recupera o resulta insuficiente y se plantea usar un conjunto público equivalente, se requiere autorización previa de cátedra y justificación en el informe según TFI §4. Esto incluye una reconstrucción de la misma base si se adopta como sustituto de D4. El permiso para el piloto figura en el [registro de 00-A](REGISTRO_EJECUCION.md) y se circunscribe a ese piloto. La autorización de cátedra para la sustitución queda pendiente si se adopta esa vía.
 
 Crear un manifiesto sencillo con ID, ruta relativa, hash, etiqueta, fuente y paciente/grupo cuando exista; agregar partición y fold. La auditoría estructural identifica archivos ilegibles y duplicados exactos por hash antes del split; resolver duplicados/etiquetas contradictorias con una regla documentada. La búsqueda perceptual de casi duplicados queda fuera inicialmente: solo se reconsidera si EDA aporta evidencia concreta.
 
@@ -210,7 +214,7 @@ La EDA visual y decisiones sobre distribución, calidad, ejemplos y posibles ata
 
 ## 12. Validación y tuning acotado [C]
 
-Los tres modelos se comparan sobre los mismos cinco folds de desarrollo. HOG es determinista por imagen; StandardScaler aprende media/escala exclusivamente en el train de cada fold mediante Pipeline. No calcular estadísticas globales antes de CV. Registrar métricas por fold y **media ± desvío estándar muestral**; los folds comparten entrenamiento y no son cinco datasets independientes.
+Los tres modelos se compararán sobre los mismos cinco folds de desarrollo si los datos y grupos lo permiten. Cualquier ajuste del esquema se documentará antes de entrenar. HOG es determinista por imagen; StandardScaler aprende media/escala exclusivamente en el train de cada fold mediante Pipeline. No calcular estadísticas globales antes de CV. Registrar métricas por fold y **media ± desvío estándar muestral**; los folds comparten entrenamiento y no son cinco datasets independientes.
 
 03 compara configuraciones iniciales; 04 realiza **GridSearchCV** sobre ambos candidatos con los mismos folds y F1 macro. Única grilla:
 
@@ -236,7 +240,7 @@ Todo ocurre en 04, en este orden:
 
 La estadística principal es descriptiva: media/desvío CV y test reservado. No se agregan Wilcoxon, 5×2cv, bootstrap inferencial ni múltiples contrastes. El bootstrap interno de RF es parte del algoritmo y no constituye un plan estadístico adicional. McNemar compara tasas de error, no F1 ni superioridad clínica. Con cifras agregadas del PDF no puede hacerse contraste pareado contra CNN.
 
-La referencia histórica es accuracy **79,47 %**, precision COVID **0,7912**, recall **0,8008**, F1 **0,7960**. Se comparan métricas equivalentes y se declaran diferencias de población, split, preprocesamiento y hardware. Si no hay test idéntico, la comparación es contextual; superar esa cifra no prueba superioridad controlada.
+La CNN queda como referencia histórica (accuracy de test **79,47 %**, precision COVID **0,7912**, recall **0,8008**, F1 **0,7960**) mientras falte evidencia de equivalencia en etiquetas, población, calidad, particiones y protocolo de evaluación. El contraste será contextual. Para una comparación directa de desempeño sobre las mismas imágenes se requiere identificar el test y disponer de las predicciones de la CNN o de una ejecución reproducible.
 
 ## 14. Interpretación, costo y figuras [C]
 
@@ -258,20 +262,20 @@ El registro breve por sprint contendrá fecha, entradas, decisión, evidencia, l
 
 Discutir privacidad, licencia, sesgo de fuente/población, FP/FN y uso indebido como diagnóstico. Las cuatro primeras fases CRISP-ML(Q) organizan el trabajo activo. Despliegue, integración, monitoreo, drift y reentrenamiento se describen **solo conceptualmente**, incluyendo costos, latencia, límites y requisitos de una hipotética validación posterior; no se construyen servicios.
 
-Éxito: reconstrucción fiel, baseline y dos candidatos evaluados sin fuga conocida, selección justificada, evidencia reproducible y defensa honesta aunque ningún candidato supere al original. No usar 79,47 % como umbral académico. Informe y defensa deben cubrir formato, resumen bilingüe, bibliografía uniforme, anexo IA y rúbrica de la [matriz de requisitos](FUENTES_Y_TRAZABILIDAD.md). Los pendientes administrativos y de acceso a datos se mantienen explícitos.
+Éxito: reconstrucción fiel, baseline y dos candidatos evaluados sin fuga conocida, selección justificada, evidencia reproducible y defensa honesta aunque ningún candidato supere al original. No usar 79,47 % como umbral académico. El cuerpo del informe se reserva para metodología, fuentes, resultados y discusión, según la estructura de TFI §7.1. Los prompts y las instrucciones operativas quedan en materiales internos. La declaración de IA va en el anexo obligatorio (TFI §§7.1 y 9). Véase la [matriz de requisitos](FUENTES_Y_TRAZABILIDAD.md). Los pendientes administrativos y de acceso a datos se mantienen explícitos.
 
 ## 17. Secuencia de seis sprints [C]
 
 | Sprint | Resultado esperado | Estado |
 |---|---|---|
-| 00 Análisis TFC | Revisión por integrantes, alcance y trazabilidad aceptados | No iniciado |
+| 00 Análisis TFC | Revisión por integrantes, alcance y trazabilidad aceptados | Cotejo documental realizado. Pendiente confirmación de ambos |
 | 01 Datos y EDA | Datos autorizados, auditoría, manifiesto/split, EDA y entorno | No iniciado |
 | 02 HOG y baseline | HOG fijo probado y B0 evaluada en desarrollo | No iniciado |
 | 03 Modelos y CV | C1/C2 iniciales comparados con B0 en folds comunes | No iniciado |
 | 04 Tuning y evaluación | Selección, registro previo, test único, errores e interpretación | No iniciado |
 | 05 Informe y defensa | Informe, comparación, ética, despliegue conceptual y ensayo | No iniciado |
 
-Planes y prompts en [Ejecución](ejecucion/README.md). Los nueve planes anteriores son [historial archivado](archivo/planificacion_inicial/README.md). Este sprint correctivo solo revisa documentación; **no inicia 00**. Cada sprint futuro exige su solicitud y el cierre verificable del anterior; no encadenarlos automáticamente.
+Planes y prompts en [Ejecución](ejecucion/README.md). Los nueve planes anteriores son [historial archivado](archivo/planificacion_inicial/README.md). El cierre de 00 requiere registrar la revisión de Juan Quirós y Andruszyszyn. Cada sprint futuro exige su solicitud y el cierre verificable del anterior.
 
 ## Avance preliminar 00-A · 02/11/2026
 

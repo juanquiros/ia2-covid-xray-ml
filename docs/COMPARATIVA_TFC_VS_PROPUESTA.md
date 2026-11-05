@@ -1,6 +1,6 @@
 # Comparativa entre el TFC original y nuestra propuesta
 
-**Integrantes:** Juan Quirós y Andruszyszyn. **Actualización:** 02/11/2026. Existe un piloto HOG + Random Forest y Dummy sobre 200 imágenes reales de desarrollo. SVM, tuning y evaluación final siguen pendientes. Las métricas exploratorias del [avance](AVANCE_2026-11-02.md) no equivalen al test del TFC. RF es la propuesta principal, sin predeterminar la selección académica definitiva.
+**Integrantes:** Juan Quirós y Andruszyszyn. **Actualización:** 05/11/2026. Existe un piloto HOG + Random Forest y Dummy sobre 200 imágenes reales de desarrollo. SVM, tuning y evaluación final siguen pendientes. Las métricas exploratorias del [avance](AVANCE_2026-11-02.md) no equivalen al test del TFC. RF es la propuesta principal, sin predeterminar la selección académica definitiva.
 
 **Convención:** [A] significa evidencia reportada por el TFC, [B] requisito de la consigna, [C] diseño o análisis propio y [D] hipótesis pendiente de experimentación. Una cifra del TFC no implica que hayamos reproducido su ejecución. Sus páginas y discrepancias se registran en [Fuentes y trazabilidad](FUENTES_Y_TRAZABILIDAD.md).
 
@@ -24,11 +24,11 @@ También distinguimos etiqueta de infección y signo visible. Una imagen etiquet
 
 Su recorrido resumido es **radiografía → CNN → COVID / NO COVID**. Dentro de la CNN hay una etapa que aprende representaciones y otra que combina esas representaciones para clasificar.
 
-**Datos:** COVID-19 Radiography Database, PNG 299×299. El conjunto de referencia contiene 3615 COVID, 10192 normales, 6012 opacidad pulmonar y 1345 neumonía viral (p. 33). Los autores construyeron cuatro configuraciones: D1 incluye las tres patologías como positivas; D2 elimina opacidad; D3 conserva solo COVID frente a normales; D4 depura manualmente D3 y conserva 2462 imágenes de cada clase (pp. 34–36). La limpieza de D4 retiró imágenes consideradas defectuosas sin acompañamiento profesional disponible. No conocemos sus IDs exactos a partir del PDF.
+**Datos:** COVID-19 Radiography Database, PNG 299×299. El conjunto de referencia contiene 3615 COVID, 10192 normales, 6012 opacidad pulmonar y 1345 neumonía viral (p. 33). Los autores construyeron cuatro configuraciones: D1 incluye las tres patologías como positivas; D2 elimina opacidad; D3 conserva solo COVID frente a normales; D4 aplica el criterio de etiquetas de D3 y añade depuración manual, con 2462 imágenes de cada clase (tabla 2, p. 36). La limpieza de D4 retiró imágenes consideradas defectuosas sin acompañamiento profesional disponible. No conocemos sus IDs exactos a partir del PDF.
 
 **Preparación:** train/validation/test declarados 80/10/10; grises y `/255` en entrenamiento/validación; aumento solo de train mediante inclinación, zoom y volteo horizontal. Las tablas de partición contienen discrepancias señaladas en el roadmap. El código de test publicado no aplica el reescalado: es una inconsistencia verificable de anexos, cuyo efecto experimental no podemos cuantificar sin reproducir la versión ejecutada.
 
-**CNN:** entrada 299×299×1; convolución de 32 filtros 3×3, pooling 2×2; convolución de 64 filtros 2×2, pooling 2×2; tercera convolución de 64 filtros 2×2; Flatten; Dense de 64 neuronas; Dropout 0,5; Dense de dos salidas con Softmax. Las convoluciones y la Dense intermedia utilizan ReLU. Los anexos I–II confirman **dos pooling**, pese a posibles ambigüedades de la prosa (pp. 68–72).
+**CNN:** entrada 299×299×1; convolución de 32 filtros 3×3, pooling 2×2; convolución de 64 filtros 2×2, pooling 2×2; tercera convolución de 64 filtros 2×2; Flatten; Dense de 64 neuronas; Dropout 0,5; Dense de dos salidas con Softmax. Las convoluciones y la Dense intermedia utilizan ReLU. La figura 25 (p. 39) y los anexos I–II (pp. 68–72) confirman **dos pooling**, después de la primera y la segunda convolución.
 
 Las convoluciones aprenden filtros locales; pooling reduce resolución; Flatten convierte mapas en 350464 valores; Dense combina esos valores; Dropout regulariza durante train y Softmax transforma puntuaciones en dos valores que suman uno. No son porcentajes certificados de acierto para un paciente. El total es **22454914 parámetros**, casi todos concentrados en Dense.
 
@@ -38,15 +38,15 @@ Las convoluciones aprenden filtros locales; pooling reduce resolución; Flatten 
 
 # 4. Nuestra propuesta [C, D]
 
-El recorrido es **radiografía → grises y resize 128×128 → HOG fijo → clasificador → COVID / normal**. Los descriptores son explícitos, pero ambos candidatos aprenden de ejemplos etiquetados.
+El recorrido es **radiografía → grises y resize 128×128 → HOG fijo → clasificador → COVID=1 / normal=0**. Los descriptores son explícitos, pero ambos candidatos aprenden de ejemplos etiquetados.
 
 | Componente | Función concreta | Decisión vigente |
 |---|---|---|
 | Preprocesamiento | Grises, 128×128 y contrato de rango/interpolación/aspecto | Se documenta en 01 e implementa una vez en 02 |
 | HOG | Histogramas de gradientes, 9 orientaciones, celdas (8,8), bloques (2,2), L2-Hys | Único descriptor; 8100 atributos; sin búsqueda extensa |
-| B0 | DummyClassifier most_frequent | Única baseline, ignora las features |
-| C1 | HOG → StandardScaler → SVM lineal | Candidato de margen regularizado |
-| C2 | HOG → Random Forest | Segundo candidato; recibe el mismo HOG sin necesidad de scaler |
+| B0 | `DummyClassifier(strategy="most_frequent")` | Única línea base, ignora las features |
+| C1 | HOG → StandardScaler → SVM lineal | Segundo candidato, de margen regularizado |
+| C2 | HOG → Random Forest | Propuesta principal, con el mismo HOG sin escalar |
 
 LBP, PCA, KNN, logística, RBF y SHAP quedan fuera del experimento inicial. La teoría complementaria explica sus ideas sin programar tareas. PCA solo se reconsiderará ante un problema concreto medido de memoria, tiempo, dimensionalidad o convergencia y una decisión explícita previa; no hay ablación prevista.
 
@@ -147,7 +147,7 @@ El HOG es idéntico para ambos candidatos. B0 participa en los mismos folds y ev
 
 **Original [A]:** 80/10/10 declarado. Validation se usa durante las 20 épocas y test se utiliza en las doce pruebas; después se destaca la prueba 10 por clasificación. No se documenta K-fold experimental. Los conteos no son completamente coherentes entre tablas y matrices; sin manifiestos no se reconstruyen IDs exactos.
 
-**Propuesta [C]:** aproximadamente 80 % desarrollo y 20 % test, seed 42, priorizando grupos/pacientes disponibles. Cinco folds comunes dentro de desarrollo: StratifiedKFold cuando la independencia sea razonable o estrategia agrupada viable. Por ajuste son aproximadamente 64 % train y 16 % validation del total; no se agrega otro holdout fijo. StandardScaler aprende solo del train del fold y HOG es fijo por imagen.
+**Propuesta [C]:** aproximadamente 80 % desarrollo y 20 % test, seed 42, priorizando grupos/pacientes disponibles. Cinco folds comunes dentro de desarrollo si los datos y grupos lo permiten, con StratifiedKFold cuando la independencia sea razonable o una estrategia agrupada viable. Con cinco folds, cada ajuste usa aproximadamente 64 % del total para entrenar y 16 % para validar. El test se reserva aparte. StandardScaler aprende solo del train del fold y HOG es fijo por imagen.
 
 El manifiesto conserva IDs, hashes y split. Se verifican duplicados exactos; los casi duplicados solo se reconsideran si EDA aporta evidencia concreta. Sin pacientes conocidos persiste riesgo residual. EDA y tuning usan desarrollo; los controles estructurales previos no habilitan evaluar test.
 
@@ -171,7 +171,7 @@ Para McNemar necesitamos dos predicciones sobre cada misma unidad independiente 
 
 # 11. Resultado de referencia
 
-**Benchmark histórico, no objetivo obligatorio:** D4, prueba 10, tabla 13 y figura 38 p. 53; resumen tabla 17 p. 57.
+D4, prueba 10, es la referencia histórica. Sus cifras se publican en la tabla 13 y la figura 38 (p. 53) y se resumen en la tabla 17 (p. 57).
 
 | Métrica | COVID | NO COVID / normal |
 |---|---:|---:|
@@ -180,17 +180,17 @@ Para McNemar necesitamos dos predicciones sobre cada misma unidad independiente 
 | F1 | 0,7960 | 0,7935 |
 | Accuracy global | **0,7947 = 79,47 %** | Misma métrica global |
 
-La matriz tiene VP197, FN49, FP52 y VN194, N=492. La especificidad es 194/(194+52)≈0,7886. Son datos originales y una interpretación aritmética de su matriz. El accuracy de validation de ese entrenamiento fue 0,8208; no mezclarlo con test.
+La figura 38 [A] tiene VP=197, FN=49, FP=52 y VN=194, con filas reales y columnas predichas. El cálculo propio [C] da (197 + 194)/492 = 79,4715… % y una especificidad de 194/246 ≈ 0,7886. La exactitud en validación de ese entrenamiento fue 82,08 % (tabla 16, p. 56).
 
 Hay variación entre entrenamientos D4: pruebas 11 y 12 obtuvieron 67,07 % y 66,06 % de accuracy test. Mostrar solo el máximo ocultaría esa variabilidad. El TFC atribuye mejora a depuración, pero el diseño no separa causalmente limpieza, cambios de población/split y azar.
 
-Condiciones de referencia: etiquetas comparables, población/calidad/versión trazables, test independiente y costo medido con igual alcance. Sin ellas, superar numéricamente 79,47 % no demuestra superioridad del método. Si falta D4 exacto, informar comparación contextual y gestionar autorización de dataset equivalente cuando corresponda.
+La CNN se usa como referencia histórica mientras falte evidencia de equivalencia de etiquetas, datos y evaluación. La base pública de 00-A no acredita D4. La adopción de un conjunto público equivalente como sustituto requiere justificación y autorización previa de cátedra (TFI §4). Véanse los [pendientes de trazabilidad](ROADMAP_TFI.md#11-datos-eda-y-particiones-c).
 
 # 12. Qué significa “mejor”
 
 Una solución podría ser interesante con una accuracy algo menor si ofrece un compromiso útil y medido de sensibilidad, especificidad, costo, latencia, tamaño y reproducibilidad. También podría ser inaceptable perder sensibilidad para ahorrar poco tiempo. No fijaremos retrospectivamente qué dimensión importa para favorecer el resultado obtenido.
 
-En este proyecto la selección propuesta usa F1 macro medio de CV y una regla operativa de desempate previa. La evaluación final presentará todas las métricas relevantes. El éxito académico no exige ganar un ranking: exige justificar decisiones, medir correctamente y explicar condiciones en que cada enfoque resulta adecuado.
+En este proyecto la selección final se hará por F1 macro medio en desarrollo y una regla operativa de desempate previa. La evaluación final presentará todas las métricas relevantes. El éxito académico no exige ganar un ranking: exige justificar decisiones, medir correctamente y explicar condiciones en que cada enfoque resulta adecuado.
 
 “Más simple” puede significar menos dependencias o una cadena más fácil de inspeccionar, pero no necesariamente menos líneas ni mayor exactitud. “Más interpretable” significa poder explicar componentes y evidencia de decisión, no diagnosticar una radiografía. “Menor costo” requiere medir también extracción y búsqueda, no solo llamar `predict` al clasificador.
 

@@ -3,9 +3,9 @@
 **Universidad Gastón Dachary · Inteligencia Artificial II · Ingeniería en Informática.**
 **Integrantes:** Juan Quirós y Andruszyszyn (nombre completo y legajos pendientes).
 
-Propuesta principal: **radiografía → preprocesamiento → HOG → Random Forest → COVID (1) / Normal (0)**, como alternativa a la CNN del TFC de 2023. DummyClassifier es la baseline; SVM lineal permanece como candidato para comparación posterior. La selección académica definitiva dependerá de experimentos, sin favorecer artificialmente a RF. Es un prototipo académico, sin validación clínica.
+Propuesta principal: **radiografía → preprocesamiento → HOG → Random Forest → COVID (1) / Normal (0)**, como alternativa a la CNN del TFC de 2023. El segundo candidato es SVM lineal con `StandardScaler`. La línea base es `DummyClassifier(strategy="most_frequent")`. Los dos candidatos usan el mismo HOG fijo. La selección final se hará por F1 macro medio en desarrollo, con cinco folds comunes si los datos y grupos lo permiten. La CNN queda como referencia histórica mientras falte evidencia de equivalencia. Es un prototipo académico, sin validación clínica.
 
-**Estado al 02/11/2026:** sprint preliminar **00-A implementado**. Piloto real de 200 imágenes de desarrollo (100 por clase), cinco folds, RF frente a Dummy, predicción individual y pruebas automatizadas. No se hizo tuning ni se creó/evaluó un test final. Los sprints académicos **00–05 permanecen pendientes**; el prototipo no acredita su cierre.
+**Estado al 05/11/2026:** cotejo documental de [Sprint 00](docs/ejecucion/SPRINT_00_ANALISIS_TFC.md) realizado, con cierre pendiente de revisión y confirmación de ambos integrantes. El piloto preliminar **00-A** ya evaluó RF y Dummy en cinco folds de desarrollo con 200 imágenes (100 por clase). Los sprints académicos 01–05 siguen pendientes.
 
 ## Instalación y pruebas
 
@@ -22,7 +22,7 @@ Las pruebas generan imágenes sintéticas en carpetas temporales para verificar 
 
 ## Datos y ejecución
 
-Fuente: [COVID-19 Radiography Database, Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database), referencia [46] del TFC. Se utilizó la versión 5, con uso académico/no comercial indicado por sus autores. La [procedencia del piloto](reports/piloto_2026-11-02/README.md) registra versión, atribución y hashes. Esta muestra no reproduce el subconjunto D4 depurado manualmente.
+Fuente: [COVID-19 Radiography Database, Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database/data), referencia [46] del TFC. Se utilizó la versión 5, con uso académico/no comercial indicado por sus autores. La [procedencia del piloto](reports/piloto_2026-11-02/README.md) registra versión, atribución y hashes. Esta muestra no reproduce el subconjunto D4 depurado manualmente.
 
 Descargar el ZIP desde Kaggle y guardarlo como `data/raw/covid19-radiography-database.zip`. SHA-256 utilizado: `15f44e7111a74f048a54a41bf699637ffaad51b08a9d4a622ff5596879cb7f2b`. Puede verificarse con `Get-FileHash`; si cambia, no asumir que se reproduce la muestra. Dataset y modelo permanecen locales, excluidos de Git.
 
@@ -55,8 +55,8 @@ Resultado preliminar: accuracy media **RF 0,7500 ± 0,0919**, frente a **Dummy 0
 - [Roadmap](docs/ROADMAP_TFI.md): análisis del TFC y protocolo vigente.
 - [Teoría y stack](docs/TEORIA_Y_STACK.md): núcleo de estudio y conceptos complementarios.
 - [Comparativa](docs/COMPARATIVA_TFC_VS_PROPUESTA.md): evidencia original frente a propuesta pendiente.
-- [Ejecución](docs/ejecucion/README.md): seis sprints activos, todavía no iniciados.
+- [Ejecución](docs/ejecucion/README.md): estado de los seis sprints académicos.
 - [Fuentes y trazabilidad](docs/FUENTES_Y_TRAZABILIDAD.md): referencias, discrepancias y requisitos académicos.
 - [Planificación inicial archivada](docs/archivo/planificacion_inicial/README.md): historial sin vigencia operativa.
 
-**Próximos pasos:** revisión académica por ambos integrantes, auditoría completa de datos/pacientes, definición de split definitivo y comparación posterior con SVM. El código de 00-A se reutilizará donde corresponda; ningún sprint posterior se ejecuta automáticamente.
+**Pendientes:** confirmación de ambos integrantes para cerrar 00 y resolución del acceso a D4 o de la autorización para usar un conjunto público equivalente antes de adoptarlo. La auditoría, el split y la evaluación de la propuesta corresponden a sprints posteriores.
