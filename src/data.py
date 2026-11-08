@@ -12,6 +12,18 @@ LABELS = {"NORMAL": 0, "COVID": 1}
 EXTENSIONS = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp"}
 
 
+def csv_rows(path):
+    with Path(path).open(encoding="utf-8-sig", newline="") as stream:
+        return list(csv.DictReader(stream))
+
+
+def write_csv(path, columns, rows):
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 @dataclass(frozen=True)
 class Sample:
     path: Path

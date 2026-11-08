@@ -5,7 +5,7 @@
 
 Propuesta principal: **radiografía → preprocesamiento → HOG → Random Forest → COVID (1) / Normal (0)**, como alternativa a la CNN del TFC de 2023. El segundo candidato es SVM lineal con `StandardScaler`. La línea base es `DummyClassifier(strategy="most_frequent")`. Los dos candidatos usan el mismo HOG fijo. La selección final se hará por F1 macro medio en desarrollo, con cinco folds comunes si los datos y grupos lo permiten. La CNN queda como referencia histórica mientras falte evidencia de equivalencia. Es un prototipo académico, sin validación clínica.
 
-**Estado al 08/11/2026:** [Sprint 00](docs/ejecucion/SPRINT_00_ANALISIS_TFC.md) cerrado el 05/11 con el cotejo documental y la confirmación de ambos integrantes. El piloto preliminar **00-A** ya evaluó RF y Dummy en cinco folds de desarrollo con 200 imágenes (100 por clase). El [Sprint 01](docs/ejecucion/SPRINT_01_DATOS_EDA.md) cerró con la auditoría, el manifiesto definitivo y el EDA de desarrollo. Los sprints 02–05 siguen pendientes.
+**Estado al 08/11/2026:** [Sprint 00](docs/ejecucion/SPRINT_00_ANALISIS_TFC.md) cerrado el 05/11 con el cotejo documental y la confirmación de ambos integrantes. El piloto preliminar **00-A** ya evaluó RF y Dummy en cinco folds de desarrollo con 200 imágenes (100 por clase). El [Sprint 01](docs/ejecucion/SPRINT_01_DATOS_EDA.md) cerró con la auditoría, el manifiesto definitivo y el EDA de desarrollo. El [Sprint 02](reports/hog_baseline.md) cerró con la matriz HOG de desarrollo y la evaluación de Dummy sobre los cinco folds definitivos. Los sprints 03–05 siguen pendientes.
 
 ## Instalación y pruebas
 

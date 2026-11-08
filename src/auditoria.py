@@ -1,7 +1,6 @@
 """Auditoría estructural de Kaggle, split reproducible y EDA de desarrollo."""
 
 import argparse
-import csv
 import json
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, fields
@@ -15,7 +14,7 @@ from zipfile import BadZipFile, ZipFile
 import numpy as np
 from openpyxl import load_workbook
 
-from .data import archive_images, read_image
+from .data import archive_images, csv_rows, read_image, write_csv
 from .features import IMAGE_SHAPE, preprocess
 from .particiones import make_folds
 
@@ -31,18 +30,6 @@ class Record:
     patient_id: str = ""
     status: str = "retained"
     retained_id: str = ""
-
-
-def csv_rows(path):
-    with Path(path).open(encoding="utf-8-sig", newline="") as stream:
-        return list(csv.DictReader(stream))
-
-
-def write_csv(path, columns, rows):
-    with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
-        writer.writeheader()
-        writer.writerows(rows)
 
 
 def archive_origins(zipped):

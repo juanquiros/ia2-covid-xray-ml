@@ -194,7 +194,7 @@ El objetivo es formalizar entradas y etiquetas, implementar una baseline y dos c
 | C1 | HOG → StandardScaler → LinearSVC(C=1) | Segundo candidato, con frontera lineal regularizada |
 | C2 | HOG → RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_leaf=1) | Propuesta principal, con reglas no lineales sobre el HOG sin escalar |
 
-HOG: **128×128**, `orientations=9`, `pixels_per_cell=(8,8)`, `cells_per_block=(2,2)`, `block_norm="L2-Hys"`, `transform_sqrt=False`. Produce `15×15×2×2×9=8100` atributos, comprobados en el prototipo 00-A. Se implementaron grises, normalización por rango del tipo, float32 y resize bilineal directo con antialiasing; 01–02 revisarán y reutilizarán ese contrato para el protocolo académico. No hay búsqueda de configuraciones HOG.
+HOG: **128×128**, `orientations=9`, `pixels_per_cell=(8,8)`, `cells_per_block=(2,2)`, `block_norm="L2-Hys"`, `transform_sqrt=False`. Produce `15×15×2×2×9=8100` atributos, comprobados en el prototipo 00-A. Se implementaron grises, normalización por rango del tipo, float32 y resize bilineal directo con antialiasing; En 02 se reutilizó ese contrato para extraer la matriz de 11.009 × 8.100 de desarrollo. El [informe del Sprint 02](../reports/hog_baseline.md) registra los resultados de Dummy sobre los cinco folds y la ruta de la matriz local. No hay búsqueda de configuraciones HOG.
 
 LinearSVC usará regularización L2, pérdida squared_hinge y `class_weight=None`; registrar solver/tolerancia/max_iter y atender convergencia sin ocultar avisos. RF mantiene `max_features="sqrt"`, bootstrap y `class_weight=None`; seed 42 en operaciones aleatorias. C1 y C2 reciben la misma información HOG: el scaler de C1 es parte de su pipeline.
 
@@ -272,7 +272,7 @@ Discutir privacidad, licencia, sesgo de fuente/población, FP/FN y uso indebido 
 |---|---|---|
 | 00 Análisis TFC | Revisión por integrantes, alcance y trazabilidad aceptados | Cerrado el 05/11/2026 |
 | 01 Datos y EDA | Datos autorizados, auditoría, manifiesto/split, EDA y entorno | Cerrado el 08/11/2026 |
-| 02 HOG y baseline | HOG fijo probado y B0 evaluada en desarrollo | No iniciado |
+| 02 HOG y baseline | HOG fijo probado y B0 evaluada en desarrollo | Cerrado el 08/11/2026 |
 | 03 Modelos y CV | C1/C2 iniciales comparados con B0 en folds comunes | No iniciado |
 | 04 Tuning y evaluación | Selección, registro previo, test único, errores e interpretación | No iniciado |
 | 05 Informe y defensa | Informe, comparación, ética, despliegue conceptual y ensayo | No iniciado |

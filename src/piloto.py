@@ -13,20 +13,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.base import clone
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
+from sklearn.metrics import confusion_matrix
 
 from .data import load_samples, read_image, save_manifest
+from .evaluation import metrics
 from .features import extract_hog, preprocess, HOG_CONFIG
 from .models import make_baseline, make_random_forest, predict_image
 from .particiones import make_folds
-
-
-def metrics(y, prediction):
-    return dict(accuracy=float(accuracy_score(y, prediction)),
-                precision=float(precision_score(y, prediction, pos_label=1, zero_division=0)),
-                recall=float(recall_score(y, prediction, pos_label=1, zero_division=0)),
-                f1=float(f1_score(y, prediction, pos_label=1, zero_division=0)),
-                f1_macro=float(f1_score(y, prediction, average="macro", zero_division=0)))
 
 
 def evaluate_cv(features, labels, folds):

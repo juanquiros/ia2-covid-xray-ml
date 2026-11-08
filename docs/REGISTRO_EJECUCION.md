@@ -1,5 +1,15 @@
 # Registro de ejecución
 
+## 02 · HOG y línea base en desarrollo · 08/11/2026
+
+**Estado:** cerrado con matriz, índice y cinco resultados de Dummy verificados. Se partió de `main` en `55315df`, coincidente con `origin/main`. El SHA-256 del manifiesto de 01 coincide con el registrado y se conservaron las imágenes y sus folds.
+
+**Extracción:** se verificaron los hashes de las 11.009 imágenes de desarrollo y se reutilizó el contrato 128 × 128 con HOG fijo. El proceso tardó 80,5 s y produjo una matriz `float32` de 11.009 × 8.100, con valores finitos. La matriz, el índice y las predicciones por imagen quedaron en `data/processed/sprint_02/`. SHA-256 de `hog.npy` `f808c8c28bf59fc6b71cbc2ec9139280e3f5a78920d2bcac11970e3e4998df1b`.
+
+**Dummy:** 11.009 predicciones fuera de fold, todas Normal. Exactitud media 0,740576 ± 0,000197 y F1 macro 0,425478 ± 0,000065, con desvío estándar muestral. Recall de COVID igual a cero en los cinco folds. Los resultados completos y comandos internos están en el [informe del Sprint 02](../reports/hog_baseline.md).
+
+**Verificación:** se cotejaron todos los IDs, etiquetas y folds, se comprobó la ausencia de IDs de test, se reextrajeron diez vectores y se recalcularon las métricas desde las predicciones guardadas. Pasaron `pip check`, 21 pruebas pertinentes y `git diff --check`. Las dos pruebas sintéticas que entrenan RF quedaron fuera de la ejecución.
+
 ## 01 · Auditoría de datos y partición definitiva · 08/11/2026
 
 **Estado:** cerrado con manifiesto, cinco folds y [análisis de desarrollo](../reports/sprint_01/README.md) verificados. El punto de partida fue `main` en `837bf35` con los cambios locales del cierre de 00.
