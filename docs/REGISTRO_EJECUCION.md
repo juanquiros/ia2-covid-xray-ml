@@ -1,5 +1,13 @@
 # Registro de ejecución
 
+## 05 · Informe final y defensa · 08/11/2026
+
+**Base y alcance.** Partimos de `1e8113f` y de la consigna cotejada con el TFC original. Se conservaron SVM lineal con C=0,1, los umbrales y los resultados publicados. Se trabajó con las predicciones guardadas de las 11.009 imágenes de desarrollo y de las 2.752 reservadas. Las imágenes reservadas permanecieron cerradas y no se hicieron ajustes ni experimentos nuevos.
+
+**Artefactos.** El informe editable y el PDF de 28 páginas, la presentación de nueve diapositivas y el ZIP para aula virtual quedaron en `output/entrega/final/`. El ZIP incluye una copia tabular con códigos de muestra nuevos y orden permutado, los agregados de EDA y HOG, sus SHA-256, el código y la [guía de reproducción](../GUIA_REPRODUCCION.md). Los datos crudos, identificadores originales, modelos, documentos académicos fuente e historial operativo se conservan fuera del paquete. La [guía de práctica](defensa/GUIA_PRACTICA.md) acompaña al equipo por separado.
+
+**Verificación.** Desde el ZIP extraído y con las dependencias fijadas en un entorno limpio, se ejecutaron `pip check`, dos pruebas sintéticas y el comando de reconstrucción. Coincidieron las métricas reservadas, las 15 filas modelo–fold y las cinco figuras. Se cotejaron las 11 configuraciones, los conteos y las cifras del PDF con los CSV. Se verificaron formato, índices, citas, anexo IA, estructura y renderizado del PDF y de las diapositivas. El [control de rúbrica](ejecucion/SPRINT_05_INFORME_DEFENSA.md) distingue la revisión técnica de la defensa de los integrantes.
+
 ## 04 · Ajuste y evaluación final · 08/11/2026
 
 **Registro previo a prueba:** a las 17:20:25 (UTC−3) se fijó SVM lineal con C=0,1 por su F1 macro medio de 0,875984 en desarrollo. El bosque del lote quedó fijado en 200 árboles, profundidad sin límite y hoja mínima 1, con F1 macro medio de 0,798345. El lote incluye Dummy y ambos candidatos. El [registro previo](../results/seleccion_pretest.json) conserva los parámetros, umbrales, métricas, SHA-256 del manifiesto, versión del entorno y hashes del código local sobre la base `f315c05`. SHA-256 del registro `421de5533435017599ea06bcbda7b1071283ea641650fefe05243e4a49a42437`. Las imágenes reservadas aún no se habían abierto.

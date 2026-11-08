@@ -10,7 +10,7 @@ Consulta documental inicial **09/10/2026**. Cotejo del Sprint 00 **05/11/2026**.
 - **[D] Hipótesis:** afirmación por contrastar en experimentos futuros.
 - **[E] Bibliografía adicional:** fundamento externo; nunca reemplaza una afirmación sobre lo que hizo el TFC.
 
-Los títulos del roadmap indican el tipo de contenido. Los cálculos sobre tablas publicadas se identifican como reconstrucción documental, nunca como métricas de un modelo nuestro. Los resultados definitivos están **pendientes**; el piloto real 00-A se informa separadamente en [Avance](AVANCE_2026-11-02.md).
+Los títulos del roadmap indican el tipo de contenido. Los cálculos sobre tablas publicadas se identifican como reconstrucción documental, nunca como métricas de un modelo nuestro. Los resultados definitivos se documentan en el [informe de evaluación](../reports/evaluacion.md). El piloto 00-A se registra por separado en [Avance](AVANCE_2026-11-02.md).
 
 ## Fuentes primarias locales
 
@@ -77,7 +77,7 @@ No hay evidencia suficiente para afirmar pacientes compartidos entre particiones
 
 Ponderaciones de la rúbrica: análisis 15 %, fundamento/modelos 20 %, implementación/reproducibilidad 20 %, evaluación 20 %, visualización/interpretabilidad/ética 10 %, comunicación 15 %.
 
-Pendientes de cátedra: fecha final (`[dd/mm/aaaa]`), plataforma, tiempos entre corchetes y cualquier material estadístico adicional aludido en la nota final del DOCX. No se interpreta esa nota como contenido adjunto disponible. Pendientes del equipo: nombre completo de Andruszyszyn, legajos e institución para carátula.
+El Sprint 05 incorporó a la carátula los datos confirmados por el equipo. La entrega es por aula virtual. La guía interna de práctica usa los tiempos orientativos de la consigna.
 
 ## Bibliografía adicional [E]
 

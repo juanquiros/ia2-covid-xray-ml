@@ -1,81 +1,26 @@
-# Objetivo
+# Sprint 05 · Informe final y defensa
 
-Integrar resultados existentes en informe académico y defensa completa. **Estado: no iniciado.** No agregar experimentos.
+**Entrega técnica verificada el 08/11/2026.** Partimos de `1e8113f`, cotejamos la consigna y el TFC, y conservamos las asignaciones, la selección, los umbrales y los resultados del Sprint 04.
 
-# Por qué lo hacemos
+## Entregables y controles
 
-El aporte del TFI se sostiene con evidencia, discusión y comprensión de ambos integrantes; no depende de alcanzar un umbral de accuracy.
+- [x] Informe editable y PDF en `output/entrega/final/`. Se verificaron 26 páginas antes del anexo, A4, márgenes de 2,5 cm, Arial de 12 pt, interlineado 1,24, numeración, carátula, resúmenes, palabras clave, índices y referencias.
+- [x] Cinco figuras y nueve tablas numeradas, explicadas en el texto y cotejadas con los resultados guardados. Se verificaron títulos, ejes, unidades y epígrafes.
+- [x] Declaración de IA en el anexo con etapas, finalidades, versiones conocidas y verificaciones.
+- [x] Presentación editable de nueve diapositivas, revisada en su versión renderizada. La [guía de práctica](../defensa/GUIA_PRACTICA.md) se conserva por separado.
+- [x] ZIP de entrega para aula virtual con informe, presentación, código, evidencia de reconstrucción y [guía](../../GUIA_REPRODUCCION.md). Los códigos de muestra del paquete no preservan el orden ni los identificadores originales.
+- [x] Reconstrucción desde el ZIP extraído con un entorno limpio. Pasaron las dos pruebas sintéticas, `pip check` y el cotejo con los CSV. Las cinco figuras coincidieron byte a byte.
+- [x] La prueba reservada permaneció cerrada. No se realizaron nuevos ajustes ni experimentos.
 
-# Conceptos necesarios
+## Rúbrica de la consigna
 
-Comparación contextual/controlada, límites, ética, comunicación científica, citas, uso declarado de IA y despliegue conceptual.
+| Criterio | Peso | Evidencia verificada |
+|---|---:|---|
+| Análisis crítico del TFC | 15 % | Secciones 1–2. Pregunta, alcance, análisis del TFC y referencia histórica de D4 |
+| Fundamentación y selección de modelos | 20 % | Secciones 3–3.5 y 5.1. Formulación, datos, HOG, línea base, candidatos y selección |
+| Implementación y reproducibilidad | 20 % | Secciones 3.3–4 y 5.1, guía y código. Partición, pipeline, prevención de fuga, grilla y reconstrucción |
+| Evaluación y análisis de resultados | 20 % | Secciones 5–6. Selección, lote reservado, métricas, matrices, errores e interpretación |
+| Visualización, interpretabilidad y ética | 10 % | Figuras 1–5 y secciones 6–8. Coeficientes HOG, límites, sesgos, consecuencias de los errores y despliegue |
+| Comunicación escrita y oral | 15 % | Formato, citas, anexo y presentación verificados. La exposición y la evaluación individual corresponden a ambos integrantes |
 
-# Entradas
-
-README, roadmap, teoría, comparativa, fuentes e índice de ejecución vigentes; estado Git y registro del cierre anterior cuando exista. Cierre 04 y resultados guardados, fuentes primarias, registros de IA, consigna y rúbrica. Datos administrativos y modalidad confirmados por equipo/cátedra.
-
-# Tareas
-
-- [ ] Redactar análisis del TFC, fundamentos, datos, pipeline, CV/tuning, resultados, errores, interpretación, discusión, límites, conclusiones y trabajos futuros sin programar nuevas pruebas.
-- [ ] Comparar con CNN solo al nivel de equivalencia demostrado; conservar referencia 79,47 %, precision 0,7912, recall 0,8008 y F1 0,7960 como cifras históricas.
-- [ ] Discutir privacidad/licencia, sesgo, FP/FN y límites académicos. Describir integración, costo/latencia, monitoreo, drift y reentrenamiento solo conceptualmente.
-- [ ] Preparar PDF A4, márgenes 2,5 cm, Arial/Times 11–12, interlineado 1,15–1,5, numeración y 20–30 páginas orientativas sin anexos; nombre TFI_IA2_Quiros_Andruszyszyn.
-- [ ] Completar carátula, resumen ≤250 palabras y palabras clave en español e inglés, índices general/figuras/tablas, referencias IEEE uniformes y anexo obligatorio de IA con propósito/verificación/versiones conocidas.
-- [ ] Verificar cada figura/tabla numerada, ejes/unidades, citas y explicación en texto; no inventar campos administrativos ni resultados faltantes.
-- [ ] Dejar repositorio accesible o ZIP según consigna e instrucciones reproducibles. Ensayar comandos en entorno limpio con pruebas/ejemplos de desarrollo y tablas desde predicciones guardadas, sin volver a evaluar test ni entrenar nuevas alternativas.
-- [ ] Preparar presentación y ensayo de ambos integrantes; confirmar [15] minutos de exposición y [10] preguntas, fecha y plataforma. Revisar toda rúbrica y comprensión individual.
-- [ ] Actualizar checklist/registros y estado final; commit y push. Informar pendientes humanos reales sin simular defensa realizada.
-
-# Archivos a crear/modificar
-
-Crear fuente editable de informe y PDF en `reports/`, presentación/material de defensa y guía de reproducción. Actualizar README, comparativa con resultados reales identificados, registros de ejecución/IA e índice. Usar resultados existentes; no cambiar módulos ML para ampliar experimentos.
-
-# Pruebas
-
-Revisar formato/renderizado de PDF, enlaces/citas, cálculos contra archivos guardados, cobertura de §§5.1–5.8 y §7, anexo IA y rúbrica. Comprobar guía en entorno limpio sin nuevo test. Ensayo humano real de explicación y preguntas; registrar lo pendiente si aún no ocurrió.
-
-# Resultados esperados
-
-Entrega legible y trazable, comparación honesta, límites y despliegue conceptual, repositorio accesible y preparación de defensa. Ninguna métrica nueva se genera en este sprint.
-
-# Criterios de aceptación
-
-- [ ] Informe y anexos cubren consigna, formato y fuentes; campos administrativos confirmados o pendientes visibles.
-- [ ] Resultados coinciden con 04; no hay experimentos añadidos ni nueva selección.
-- [ ] Despliegue/monitoreo solo conceptuales; IA declarada y figuras verificadas.
-- [ ] Ambos integrantes prepararon defensa y revisaron rúbrica; no declarar ensayo sin evidencia humana.
-- [ ] Entregables, guía, checklist y commit/push comprobados.
-
-# Qué debemos saber explicar
-
-Todo el proyecto: crítica del original, fundamentos, decisiones, código y resultados; errores y límites; reproducibilidad; qué requeriría un uso real y por qué el prototipo no lo valida.
-
-# Preguntas posibles de defensa
-
-1. ¿Cuál es el aporte concreto aunque no superemos a la CNN?
-2. ¿Qué permite afirmar la comparación y qué no?
-3. ¿Cuál fue el error o límite más relevante?
-4. ¿Cómo se regeneran tablas sin repetir selección por test?
-5. ¿Qué se implementó de CRISP-ML(Q) y qué quedó conceptual?
-6. ¿Qué falta para un uso clínico real?
-7. ¿Cómo verificaron y declararon la asistencia de IA?
-8. ¿Puede cada integrante defender todas las decisiones?
-
-# Prompt para Codex
-
-```text
-Ejecutá únicamente SPRINT_05_INFORME_DEFENSA según su plan vigente. Leé primero README.md,
-docs/ROADMAP_TFI.md, docs/TEORIA_Y_STACK.md, docs/COMPARATIVA_TFC_VS_PROPUESTA.md,
-docs/FUENTES_Y_TRAZABILIDAD.md, docs/ejecucion/README.md y el registro de ejecución
-si existe; inspeccioná Git y las instrucciones aplicables. Verificá evidencia de cierre del sprint 04; no lo des por completo por existir un plan.
-Conservá HOG fijo, B0 DummyClassifier, C1 SVM lineal con StandardScaler y C2 RF.
-Respetá límites, entradas y orden de tareas de este sprint; los planes archivados
-no son instrucciones activas. No añadas candidatos, descriptores, infraestructura
-ni experimentos opcionales. Ejecutá las pruebas pertinentes y registrá evidencia
-real, decisiones, limitaciones y uso de IA. Si falta intervención humana necesaria,
-no la inventes: explicá el pendiente y avanzá solo en tareas independientes.
-Actualizá documentación, checklist y estado según lo realmente completado.
-Revisá el diff, hacé un commit coherente y push al remoto/rama del proyecto,
-confirmá el resultado y reportá SHA, verificaciones y pendientes.
-No ejecutes ni inicies el siguiente sprint.
-```
+El [registro de ejecución](../REGISTRO_EJECUCION.md) y el [registro de IA](../REGISTRO_IA.md) documentan la evidencia técnica. El paquete no incluye registros internos ni material histórico.
