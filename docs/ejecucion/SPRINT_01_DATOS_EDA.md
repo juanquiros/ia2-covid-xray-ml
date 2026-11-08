@@ -1,6 +1,6 @@
 # Objetivo
 
-Preparar datos autorizados, entorno y EDA de desarrollo, con un manifiesto y partición reproducibles. **Estado: no iniciado.**
+Preparar datos autorizados, entorno y EDA de desarrollo, con un manifiesto y partición reproducibles. **Estado: cerrado el 08/11/2026.** Inventario, partición, cinco folds y [EDA de desarrollo](../../reports/sprint_01/README.md) verificados.
 
 # Por qué lo hacemos
 
@@ -16,19 +16,19 @@ README, roadmap, teoría, comparativa, fuentes e índice de ejecución vigentes;
 
 # Tareas
 
-- [ ] Verificar versión/licencia y recuperar datos mediante su acceso autorizado; registrar qué parte de D4 puede reproducirse.
-- [ ] Crear venv y requirements con versiones probadas del stack mínimo; registrar comandos y seed 42.
-- [ ] Inventariar ID, ruta relativa, hash, clase, fuente y grupo/paciente cuando exista. Detectar archivos ilegibles y duplicados exactos, resolver conflictos con una regla explícita.
-- [ ] Registrar split aproximado 80 % desarrollo/20 % test; priorizar separación de pacientes/grupos. Preparar cinco folds comunes, estratificados o agrupados según metadatos viables.
-- [ ] Comprobar clases y grupos suficientes antes de aceptar el esquema; documentar riesgo residual si faltan pacientes.
-- [ ] Realizar EDA de desarrollo: conteos, tamaños/rangos, calidad, ejemplos y fuentes disponibles. Señalar atajos observables sin inventar causalidad.
-- [ ] Fijar contrato de grises/resize 128×128, rango, tipo, interpolación y aspecto; documentar decisiones. No extraer HOG todavía.
-- [ ] Mantener casi duplicados perceptuales fuera del alcance salvo evidencia concreta de EDA; no explorar test visualmente ni evaluar modelos.
-- [ ] Registrar evidencias y uso de IA, verificar, actualizar checklist e índice; commit y push. No iniciar 02.
+- [x] Verificar versión/licencia y recuperar datos mediante su acceso autorizado; registrar qué parte de D4 puede reproducirse.
+- [x] Reutilizar el entorno Python 3.12.14, fijar las dependencias del lector de metadatos y verificar `pip check`.
+- [x] Inventariar ID, ruta relativa, hash, clase, fuente y grupo/paciente cuando exista. Detectar archivos ilegibles y duplicados exactos, resolver conflictos con una regla explícita.
+- [x] Registrar split aproximado 80 % desarrollo/20 % test; priorizar separación de pacientes/grupos. Preparar cinco folds comunes, estratificados o agrupados según metadatos viables.
+- [x] Comprobar clases y grupos suficientes antes de aceptar el esquema; documentar riesgo residual si faltan pacientes.
+- [x] Realizar EDA de desarrollo por clase y tamaño, cuantificar indicadores de intensidad, revisar ejemplos y documentar dominios de referencia y el posible sesgo por origen.
+- [x] Fijar contrato de grises/resize 128×128, rango, tipo, interpolación y aspecto; documentar decisiones. No extraer HOG todavía.
+- [x] Mantener casi duplicados perceptuales fuera del alcance salvo evidencia concreta de EDA; no explorar test visualmente ni evaluar modelos.
+- [x] Registrar evidencias y uso de IA, actualizar el índice y verificar el diff local. Commit y push quedan sujetos a solicitud expresa.
 
 # Archivos a crear/modificar
 
-Crear `requirements.txt`, `src/data.py`, `configs/experimento.json`, `data/manifiesto.csv`, `reports/eda.md` y figuras de EDA. Añadir pruebas relevantes de datos/split en `tests/`; actualizar registros y documentos. Datos pesados o identificadores sensibles no se publican.
+El código de auditoría reutiliza el lector de `src/data.py` y la lógica de CV del piloto. La [configuración](../../configs/experimento.json) fija versión, ZIP, semilla, proporción, folds y tamaño de entrada. El inventario, el manifiesto y el resumen reproducidos quedan en `data/processed/sprint_01/`, excluidos de Git junto con las imágenes crudas. El [informe](../../reports/sprint_01/README.md) publica agregados y figuras.
 
 # Pruebas
 
@@ -40,11 +40,11 @@ Inventario trazable, datos comparables en el nivel demostrado, entorno reproduci
 
 # Criterios de aceptación
 
-- [ ] Acceso/licencia y sustituciones autorizadas cuando corresponda; limitaciones declaradas.
-- [ ] Split/folds reproducibles, sin cruces conocidos; pacientes ausentes o insuficiencias explícitos.
-- [ ] EDA y contrato 128×128 documentados sin abrir evaluación de test.
-- [ ] No hay bloqueo programático del test, buscador perceptual ni HOG/modelos ejecutados.
-- [ ] Pruebas y documentación verificadas; commit y push confirmados.
+- [x] Acceso/licencia y sustituciones autorizadas cuando corresponda; limitaciones declaradas.
+- [x] Split/folds reproducibles, sin cruces conocidos; pacientes ausentes o insuficiencias explícitos.
+- [x] EDA y contrato 128×128 documentados sin abrir evaluación de test.
+- [x] No hay bloqueo programático del test, buscador perceptual ni HOG/modelos ejecutados.
+- [x] Pruebas pertinentes, regeneración del manifiesto y documentación verificadas.
 
 # Qué debemos saber explicar
 
@@ -58,6 +58,19 @@ Diferencia entre auditoría estructural y exploración de desarrollo; por qué e
 4. ¿Qué riesgo queda si no disponemos de pacientes?
 5. ¿Por qué el test no participa en EDA ni decisiones de calidad visual?
 6. ¿Qué puede perderse al reducir a 128×128?
+
+# Reproducción local
+
+Desde la raíz, usar el entorno con las versiones de `requirements.txt`. En la [ficha de Kaggle](https://www.kaggle.com/datasets/tawsifurrahman/covid19-radiography-database/data) seleccionar la versión 5 y guardar el ZIP en `data/raw/covid19-radiography-database.zip`. El comando comprueba el SHA-256 fijado en la configuración antes de abrir el ZIP. Elegir una ruta de salida nueva para preservar una ejecución previa.
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m src.auditoria --config configs/experimento.json --output data/processed/sprint_01
+.\.venv\Scripts\python.exe -m src.eda data/processed/sprint_01/resumen.json --output reports/sprint_01
+```
+
+El inventario tiene una fila por ruta elegible, con ID SHA-256 del nombre de fuente versionado y la ruta, SHA-256 del archivo, etiqueta, fuente, dominio de referencia, paciente si se conoce, estado y el ID canónico en caso de duplicado. El manifiesto añade `partition` y `validation_fold` de 1 a 5 para desarrollo. En test el fold queda vacío.
 
 # Prompt para Codex
 
@@ -73,7 +86,7 @@ ni experimentos opcionales. Ejecutá las pruebas pertinentes y registrá evidenc
 real, decisiones, limitaciones y uso de IA. Si falta intervención humana necesaria,
 no la inventes: explicá el pendiente y avanzá solo en tareas independientes.
 Actualizá documentación, checklist y estado según lo realmente completado.
-Revisá el diff, hacé un commit coherente y push al remoto/rama del proyecto,
-confirmá el resultado y reportá SHA, verificaciones y pendientes.
+Revisá el diff e informá verificaciones y pendientes.
+Hacé commit o push solo si el usuario lo solicita expresamente.
 No ejecutes ni inicies el siguiente sprint.
 ```

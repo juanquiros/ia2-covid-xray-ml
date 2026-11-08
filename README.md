@@ -5,7 +5,7 @@
 
 Propuesta principal: **radiografía → preprocesamiento → HOG → Random Forest → COVID (1) / Normal (0)**, como alternativa a la CNN del TFC de 2023. El segundo candidato es SVM lineal con `StandardScaler`. La línea base es `DummyClassifier(strategy="most_frequent")`. Los dos candidatos usan el mismo HOG fijo. La selección final se hará por F1 macro medio en desarrollo, con cinco folds comunes si los datos y grupos lo permiten. La CNN queda como referencia histórica mientras falte evidencia de equivalencia. Es un prototipo académico, sin validación clínica.
 
-**Estado al 05/11/2026:** cotejo documental de [Sprint 00](docs/ejecucion/SPRINT_00_ANALISIS_TFC.md) realizado, con cierre pendiente de revisión y confirmación de ambos integrantes. El piloto preliminar **00-A** ya evaluó RF y Dummy en cinco folds de desarrollo con 200 imágenes (100 por clase). Los sprints académicos 01–05 siguen pendientes.
+**Estado al 08/11/2026:** [Sprint 00](docs/ejecucion/SPRINT_00_ANALISIS_TFC.md) cerrado el 05/11 con el cotejo documental y la confirmación de ambos integrantes. El piloto preliminar **00-A** ya evaluó RF y Dummy en cinco folds de desarrollo con 200 imágenes (100 por clase). El [Sprint 01](docs/ejecucion/SPRINT_01_DATOS_EDA.md) cerró con la auditoría, el manifiesto definitivo y el EDA de desarrollo. Los sprints 02–05 siguen pendientes.
 
 ## Instalación y pruebas
 
@@ -59,4 +59,4 @@ Resultado preliminar: accuracy media **RF 0,7500 ± 0,0919**, frente a **Dummy 0
 - [Fuentes y trazabilidad](docs/FUENTES_Y_TRAZABILIDAD.md): referencias, discrepancias y requisitos académicos.
 - [Planificación inicial archivada](docs/archivo/planificacion_inicial/README.md): historial sin vigencia operativa.
 
-**Pendientes:** confirmación de ambos integrantes para cerrar 00 y resolución del acceso a D4 o de la autorización para usar un conjunto público equivalente antes de adoptarlo. La auditoría, el split y la evaluación de la propuesta corresponden a sprints posteriores.
+**Partición académica:** 11.009 imágenes en desarrollo con cinco folds comunes y 2.752 en test reservado. Los 200 hashes del piloto quedaron en desarrollo. El [informe del Sprint 01](reports/sprint_01/README.md) describe la procedencia, las exclusiones y los límites de la comparación con D4.

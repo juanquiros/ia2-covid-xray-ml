@@ -1,14 +1,29 @@
 # Registro de ejecución
 
+## 01 · Auditoría de datos y partición definitiva · 08/11/2026
+
+**Estado:** cerrado con manifiesto, cinco folds y [análisis de desarrollo](../reports/sprint_01/README.md) verificados. El punto de partida fue `main` en `837bf35` con los cambios locales del cierre de 00.
+
+**Fuente y aprobación:** el equipo había comunicado aprobación y acceso el 05/11. Al consultar por la versión, aclaró el 08/11 que la aprobación cubre «el uso de todos los datos». Se usó el conjunto completo disponible en el ZIP local de Kaggle, identificado por metadatos y SHA-256 como versión 5. Se conservaron todas las imágenes elegibles de COVID y Normal, con exclusión estructural de copias exactas. Los manifiestos y particiones originales de D4 no estaban disponibles.
+
+**Evidencia:** 13.808 rutas inventariadas, 47 copias exactas excluidas, cero ilegibles, cero conflictos de etiqueta y cero imágenes con paciente verificable. Se fijaron 11.009 imágenes de desarrollo y 2.752 de test. Los 200 hashes de 00-A quedaron en desarrollo. Se comprobaron ambas clases, unicidad y separación por ID y hash y cobertura de validación una sola vez por imagen. Sin IDs de pacientes, la independencia por paciente queda sin verificar.
+
+**Verificación:** Python 3.12.14, `pip check` sin conflictos, 19 pruebas pertinentes aprobadas y tres pruebas de HOG o entrenamiento excluidas de la ejecución. Dos regeneraciones con semilla 42 produjeron inventario, manifiesto y resumen idénticos. SHA-256 del manifiesto `262e251fcfbe4c370a613f987725306d6fb4f5e735a15bcce49cdb2fb352707d`. Se verificaron las figuras, una muestra visual de ocho casos de desarrollo y `git diff --check`. Los comandos están en el [plan del Sprint 01](ejecucion/SPRINT_01_DATOS_EDA.md).
+
 ## 00 · Análisis crítico del TFC · 05/11/2026
 
-**Estado:** cotejo documental realizado. Cierre pendiente de registrar la revisión y confirmación individual de Juan Quirós y Andruszyszyn según el [plan de Sprint 00](ejecucion/SPRINT_00_ANALISIS_TFC.md).
+**Estado:** cerrado el 05/11/2026. Cotejo documental realizado y revisión de ambos integrantes confirmada según el [plan de Sprint 00](ejecucion/SPRINT_00_ANALISIS_TFC.md).
 
 **Punto de partida:** `juanquiros/ia2-covid-xray-ml`, rama `main` en `e77597b`, coincidente con el remoto verificado con `git ls-remote`. El árbol de trabajo estaba limpio. Cambios documentales locales para revisión.
 
 **Evidencia:** se verificaron hashes y se cotejó la consigna de Descargas con la matriz de requisitos. En el TFC se contrastaron los cuatro conjuntos, las doce pruebas, los anexos de la CNN y D01–D08. Se recalcularon las métricas centrales de D4 a partir de la figura 38 y se recontaron los 52 casos de la tabla 30, separando acuerdo de aciertos frente a etiquetas. Se revisaron enlaces y coherencia documental y se ejecutó `git diff --check`. Véanse [Fuentes](FUENTES_Y_TRAZABILIDAD.md) y [Roadmap](ROADMAP_TFI.md).
 
-**Pendientes de datos:** acreditar versión, manifiesto y particiones de D4. Si se adopta un conjunto equivalente, justificarlo y obtener autorización previa de cátedra según TFI §4. La documentación disponible acredita permiso para el piloto 00-A y deja pendiente la autorización de sustitución.
+**Revisión del equipo:** el 05/11/2026 se comunicaron las dos confirmaciones en este chat.
+
+- **Juan Quirós:** confirmó que revisó el análisis y puede explicar las decisiones.
+- **Andruszyszyn:** el equipo transmitió su confirmación de que revisó el análisis y puede explicar las decisiones.
+
+**Datos:** el equipo informó el 05/11/2026 que la cátedra aprobó los datos y que el acceso está confirmado. En 01 se registrarán el conjunto y la versión aprobados y el respaldo de esa aprobación. También se verificará qué se puede acreditar sobre el manifiesto y las particiones de D4. Si se usa un conjunto equivalente, se justificará su correspondencia según TFI §4.
 
 **Alcance ejecutado:** revisión documental y cálculos sobre cifras publicadas. La evidencia exploratoria de 00-A se conserva aparte.
 

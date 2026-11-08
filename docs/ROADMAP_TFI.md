@@ -1,6 +1,6 @@
 # Roadmap del TFI de Inteligencia Artificial II
 
-**Equipo:** Juan Quirós y Andruszyszyn. **Plan base:** 09/10/2026. **Actualización:** 05/11/2026. El [Sprint 00](ejecucion/SPRINT_00_ANALISIS_TFC.md) queda pendiente de confirmación de ambos integrantes. La evidencia preliminar de 00-A se mantiene en el [avance](AVANCE_2026-11-02.md).
+**Equipo:** Juan Quirós y Andruszyszyn. **Plan base:** 09/10/2026. **Actualización:** 08/11/2026. El [Sprint 00](ejecucion/SPRINT_00_ANALISIS_TFC.md) cerró con la confirmación de ambos integrantes. La evidencia preliminar de 00-A se mantiene en el [avance](AVANCE_2026-11-02.md).
 
 Este proyecto estudiará si características explícitas de radiografías permiten construir una alternativa clásica defendible a la CNN del TFC de Vega Lencina y Armoa (2023). **HOG + Random Forest** es la propuesta principal del prototipo; **HOG + StandardScaler + SVM lineal** es el segundo candidato, con `DummyClassifier(strategy="most_frequent")` como línea base. La selección final se hará por F1 macro medio en desarrollo.
 
@@ -204,13 +204,15 @@ LinearSVC usará regularización L2, pérdida squared_hinge y `class_weight=None
 
 Para acreditar D4 se necesita la versión o copia de origen, el manifiesto de imágenes retenidas y excluidas con etiquetas y criterios de depuración, y la asignación original a train, validación y test. Para comprobar independencia se necesitan identificadores fiables de paciente o grupo. La versión 5 pública usada en 00-A identifica la base, pero no acredita el subconjunto ni sus particiones.
 
-Si D4 no se recupera o resulta insuficiente y se plantea usar un conjunto público equivalente, se requiere autorización previa de cátedra y justificación en el informe según TFI §4. Esto incluye una reconstrucción de la misma base si se adopta como sustituto de D4. El permiso para el piloto figura en el [registro de 00-A](REGISTRO_EJECUCION.md) y se circunscribe a ese piloto. La autorización de cátedra para la sustitución queda pendiente si se adopta esa vía.
+Si D4 no se recupera o resulta insuficiente y se plantea usar un conjunto público equivalente, se requiere autorización previa de cátedra y justificación en el informe según TFI §4. Esto incluye una reconstrucción de la misma base si se adopta como sustituto de D4. El permiso para el piloto figura en el [registro de 00-A](REGISTRO_EJECUCION.md) y se circunscribe a ese piloto. El equipo comunicó que la cátedra aprobó los datos y confirmó el acceso. El equipo precisó que la aprobación cubre el conjunto completo. En 01 se usó la versión 5 local de Kaggle como equivalente en la tarea binaria. El [informe de Sprint 01](../reports/sprint_01/README.md) documenta las diferencias de filtrado y partición con D4.
 
 Crear un manifiesto sencillo con ID, ruta relativa, hash, etiqueta, fuente y paciente/grupo cuando exista; agregar partición y fold. La auditoría estructural identifica archivos ilegibles y duplicados exactos por hash antes del split; resolver duplicados/etiquetas contradictorias con una regla documentada. La búsqueda perceptual de casi duplicados queda fuera inicialmente: solo se reconsidera si EDA aporta evidencia concreta.
 
 Reservar aproximadamente **80 % desarrollo y 20 % test**, seed **42**. Priorizar pacientes/grupos separados si hay identificadores viables. Dentro de desarrollo usar **StratifiedKFold(n_splits=5, shuffle=True, random_state=42)** cuando sea razonable asumir independencia; si hay grupos, usar una partición agrupada viable, por ejemplo StratifiedGroupKFold. Comprobar clases y grupos suficientes; si no los hay, documentar y revisar el protocolo antes de entrenar. No fabricar IDs de paciente a partir del nombre de archivo.
 
 La EDA visual y decisiones sobre distribución, calidad, ejemplos y posibles atajos se hacen en desarrollo. El inventario mínimo necesario para particionar no habilita explorar errores o métricas del test. Guardar el split como tabla basta: **no se implementan mecanismos programáticos de bloqueo o sellado**. Si faltan pacientes queda riesgo residual explícito. No imponer balance artificial ni aumentar datos como tarea inicial.
+
+La partición definitiva registrada en 01 contiene 11.009 imágenes en desarrollo y 2.752 en test. Los cinco folds estratificados se fijaron por imagen. Se comprobó la separación por ID y hash. Los metadatos disponibles dejan sin verificar la independencia por paciente. El manifiesto se conserva en `data/processed/sprint_01/manifiesto.csv` y puede regenerarse con la [configuración documentada](ejecucion/SPRINT_01_DATOS_EDA.md#reproducción-local).
 
 ## 12. Validación y tuning acotado [C]
 
@@ -268,14 +270,14 @@ Discutir privacidad, licencia, sesgo de fuente/población, FP/FN y uso indebido 
 
 | Sprint | Resultado esperado | Estado |
 |---|---|---|
-| 00 Análisis TFC | Revisión por integrantes, alcance y trazabilidad aceptados | Cotejo documental realizado. Pendiente confirmación de ambos |
-| 01 Datos y EDA | Datos autorizados, auditoría, manifiesto/split, EDA y entorno | No iniciado |
+| 00 Análisis TFC | Revisión por integrantes, alcance y trazabilidad aceptados | Cerrado el 05/11/2026 |
+| 01 Datos y EDA | Datos autorizados, auditoría, manifiesto/split, EDA y entorno | Cerrado el 08/11/2026 |
 | 02 HOG y baseline | HOG fijo probado y B0 evaluada en desarrollo | No iniciado |
 | 03 Modelos y CV | C1/C2 iniciales comparados con B0 en folds comunes | No iniciado |
 | 04 Tuning y evaluación | Selección, registro previo, test único, errores e interpretación | No iniciado |
 | 05 Informe y defensa | Informe, comparación, ética, despliegue conceptual y ensayo | No iniciado |
 
-Planes y prompts en [Ejecución](ejecucion/README.md). Los nueve planes anteriores son [historial archivado](archivo/planificacion_inicial/README.md). El cierre de 00 requiere registrar la revisión de Juan Quirós y Andruszyszyn. Cada sprint futuro exige su solicitud y el cierre verificable del anterior.
+Planes y prompts en [Ejecución](ejecucion/README.md). Los nueve planes anteriores son [historial archivado](archivo/planificacion_inicial/README.md). La revisión de Juan Quirós y Andruszyszyn consta en el [registro de ejecución](REGISTRO_EJECUCION.md). Cada sprint futuro exige su solicitud y el cierre verificable del anterior.
 
 ## Avance preliminar 00-A · 02/11/2026
 

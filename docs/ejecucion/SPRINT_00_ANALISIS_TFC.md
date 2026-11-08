@@ -1,6 +1,6 @@
 # Objetivo
 
-Revisar y acordar la reconstrucción del TFC y el alcance simplificado con ambos integrantes. **Estado al 05/11/2026: cotejo documental realizado, cierre pendiente.** Falta registrar la revisión y confirmación efectiva de Juan Quirós y Andruszyszyn.
+Revisar y acordar la reconstrucción del TFC y el alcance simplificado con ambos integrantes. **Estado al 05/11/2026: cerrado.** El [registro de ejecución](../REGISTRO_EJECUCION.md#00--análisis-crítico-del-tfc--05112026) consigna la confirmación de ambos integrantes.
 
 # Por qué lo hacemos
 
@@ -20,7 +20,7 @@ README, roadmap, teoría, comparativa, fuentes e índice de ejecución vigentes;
 - [x] Revisar discrepancias D01–D08, fortalezas, limitaciones y denominadores de la consulta profesional.
 - [x] Documentar COVID=1 frente a normal=0, las evidencias faltantes de D4 y el carácter histórico de la CNN mientras falte equivalencia.
 - [x] Documentar HOG fijo, RF como propuesta principal, SVM lineal con escalado como segundo candidato y `DummyClassifier(strategy="most_frequent")` como línea base. Selección por F1 macro medio en desarrollo, con cinco folds comunes si los datos y grupos lo permiten y test reservado.
-- [ ] Registrar por separado la confirmación de Juan Quirós y Andruszyszyn y las preguntas abiertas de la revisión.
+- [x] Registrar por separado la confirmación de Juan Quirós y Andruszyszyn y las preguntas abiertas de la revisión.
 - [x] Actualizar los registros existentes de ejecución e IA y dejar identificados los pendientes administrativos y de datos.
 - [x] Verificar documentación, enlaces y diff. Dejar los cambios locales listos para revisión. Commit y push requieren solicitud expresa.
 
@@ -30,7 +30,7 @@ Actualizar [ejecución](../REGISTRO_EJECUCION.md), [uso de IA](../REGISTRO_IA.md
 
 # Pruebas
 
-Comprobar citas/páginas, coherencia de totales y métricas documentales, enlaces y distinción entre test/validation. Confirmar que no se inventaron IDs de D4 ni resultados. Revisar evidencia de la intervención humana pendiente.
+Comprobar citas/páginas, coherencia de totales y métricas documentales, enlaces y distinción entre test/validation. Confirmar que no se inventaron IDs de D4 ni resultados. Comprobar que las dos confirmaciones estén asentadas.
 
 # Resultados esperados
 
@@ -39,7 +39,7 @@ Análisis crítico y alcance listos para revisión de ambos integrantes, con los
 # Criterios de aceptación
 
 - [x] Tablas y arquitectura históricas verificadas, con discrepancias visibles.
-- [ ] Registrar la confirmación de cada integrante de que revisó el análisis y puede explicar las decisiones. Pendiente para ambos.
+- [x] Registrar la confirmación de cada integrante de que revisó el análisis y puede explicar las decisiones.
 - [x] Línea base y dos candidatos definidos. Matriz académica cotejada con la consigna.
 - [x] Registros, checklist y documentación coherentes. Diff local verificado.
 

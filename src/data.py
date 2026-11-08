@@ -3,7 +3,7 @@
 import csv
 from dataclasses import dataclass
 from hashlib import sha256
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import numpy as np
 from PIL import Image
@@ -94,6 +94,16 @@ def save_manifest(samples, path):
                              sample.patient_id, "development_pilot"])
 
 
+def archive_images(zipped):
+    """Recorre solo PNG de COVID/Normal en la estructura de Kaggle."""
+    for entry in sorted(zipped.infolist(), key=lambda item: item.filename):
+        path = PurePosixPath(entry.filename)
+        parts = path.parts
+        if (not entry.is_dir() and len(parts) == 4 and parts[2] == "images"
+                and parts[1].upper() in LABELS and path.suffix.lower() == ".png"):
+            yield entry, LABELS[parts[1].upper()]
+
+
 def prepare_archive(archive, output, max_per_class=100):
     """Audita hashes de COVID/Normal del ZIP y extrae solo el piloto.
 
@@ -108,11 +118,8 @@ def prepare_archive(archive, output, max_per_class=100):
     rng = np.random.default_rng(42)
     unique, seen, duplicates, counts = {0: [], 1: []}, {}, [], {0: 0, 1: 0}
     with ZipFile(archive) as zipped:
-        for member in sorted(zipped.namelist()):
-            parts = Path(member).parts
-            if len(parts) != 4 or parts[2] != "images" or parts[1].upper() not in LABELS or not member.lower().endswith(".png"):
-                continue
-            label = LABELS[parts[1].upper()]
+        for entry, label in archive_images(zipped):
+            member = entry.filename
             counts[label] += 1
             digest = sha256(zipped.read(member)).hexdigest()
             if digest in seen:

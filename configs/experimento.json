@@ -1,0 +1,12 @@
+{
+  "dataset": "tawsifurrahman/covid19-radiography-database",
+  "version": 5,
+  "archive": "data/raw/covid19-radiography-database.zip",
+  "archive_sha256": "15f44e7111a74f048a54a41bf699637ffaad51b08a9d4a622ff5596879cb7f2b",
+  "pilot_manifest": "reports/piloto_2026-11-02/source_manifest.csv",
+  "pilot_groups": "reports/piloto_2026-11-02/manifest.csv",
+  "seed": 42,
+  "test_fraction": 0.2,
+  "folds": 5,
+  "image_shape": [128, 128]
+}
