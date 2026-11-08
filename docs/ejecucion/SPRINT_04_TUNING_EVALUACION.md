@@ -1,6 +1,6 @@
 # Objetivo
 
-Realizar tuning acotado, seleccionar en desarrollo y evaluar test una vez; cerrar errores e interpretación del modelo elegido. **Estado: no iniciado.**
+Realizar tuning acotado, seleccionar en desarrollo y evaluar test una vez; cerrar errores e interpretación del modelo elegido. **Estado: cerrado el 08/11/2026.** Selección fijada en desarrollo, lote reservado único y métricas recalculadas desde las predicciones.
 
 # Por qué lo hacemos
 
@@ -12,24 +12,24 @@ GridSearchCV, F1 macro, media/desvío CV, reajuste final, test retenido, FP/FN, 
 
 # Entradas
 
-README, roadmap, teoría, comparativa, fuentes e índice de ejecución vigentes; estado Git y registro del cierre anterior cuando exista. Cierre 03: candidatos, HOG fijo, folds, métricas y pruebas; manifiesto de desarrollo/test. Antes de este sprint no hay evaluación de test.
+README, roadmap, teoría, comparativa, fuentes e índice de ejecución vigentes; estado Git y registro del cierre anterior cuando exista. Cierre 03 en `f315c05`. Usar el manifiesto de 01, HOG e índice de 02 y los resultados verificados de 03. Antes de este sprint no hay evaluación reservada.
 
 # Tareas
 
-- [ ] Ejecutar GridSearchCV solo en desarrollo: SVM C={0.1,1,10}; RF n_estimators={100,200}, max_depth={None,20}, min_samples_leaf={1,3}. Mantener HOG y restantes parámetros. Cinco folds comunes: 55 ajustes de búsqueda, sin contar reajustes; no es una cuota experimental.
-- [ ] Comparar CV y sus límites con B0; guardar resultados por configuración/fold y media/desvío muestral.
-- [ ] Seleccionar por mayor F1 macro medio; empate exacto entre candidatos favorece SVM lineal y dentro de grilla se mantiene orden documentado. No descartar resultados incómodos.
-- [ ] ANTES DEL TEST: registrar decisión, configuración, parámetros, split y commit de código; fijar B0/C1/C2 como lote final y C1 frente a C2 como único McNemar eventual, bilateral α=0.05. Basta registro sencillo, sin mecanismos de bloqueo.
-- [ ] Reajustar modelos fijados con desarrollo completo y evaluar test UNA VEZ; guardar predicciones por ID y scores válidos. No cambiar ganador, umbral ni pipeline por lo observado.
-- [ ] Generar matriz y accuracy, precision, recall, especificidad, F1 por clase/F1 macro. ROC-AUC solo con scores continuos válidos y ambas clases; PR/AP solo si desbalance real observado en desarrollo justificó su uso.
-- [ ] Analizar FP/FN y aciertos; interpretar al elegido mediante coeficientes HOG de SVM o importancia RF. Permutación solo si aporta claridad sobre desarrollo, declarando sus límites. No SHAP ni mapas clínicos.
-- [ ] Aplicar McNemar solo con predicciones individuales de C1/C2 sobre mismas imágenes y unidades razonablemente independientes. Reportar b/c, n, diferencia y p; si no corresponde, justificar. No Wilcoxon, 5×2cv ni bootstrap inferencial.
-- [ ] Informar tiempos aproximados de extracción, búsqueda/ajuste e inferencia, tamaño y complejidad; RAM opcional fácil. Contrastar contextualmente con referencia CNN y registrar diferencias de datos/split/hardware.
-- [ ] Verificar métricas desde predicciones ya guardadas sin reabrir experimentos, actualizar checklist/registros; commit y push. No iniciar 05.
+- [x] Ejecutar GridSearchCV solo en desarrollo: SVM C={0.1,1,10}; RF n_estimators={100,200}, max_depth={None,20}, min_samples_leaf={1,3}. Mantener HOG y restantes parámetros. Cinco folds comunes: 55 ajustes de búsqueda, sin contar reajustes; no es una cuota experimental.
+- [x] Comparar CV y sus límites con B0; guardar resultados por configuración/fold y media/desvío muestral.
+- [x] Seleccionar por mayor F1 macro medio; empate exacto entre candidatos favorece SVM lineal y dentro de grilla se mantiene orden documentado. No descartar resultados incómodos.
+- [x] ANTES DEL TEST: registrar decisión, configuración, parámetros, split, commit base y hashes del código local; fijar B0/C1/C2 como lote final y C1 frente a C2 como único McNemar eventual, bilateral α=0.05. Basta registro sencillo, sin mecanismos de bloqueo.
+- [x] Reajustar modelos fijados con desarrollo completo y evaluar test UNA VEZ; guardar predicciones por ID y scores válidos. No cambiar ganador, umbral ni pipeline por lo observado.
+- [x] Generar matriz y accuracy, precision, recall, especificidad, F1 por clase/F1 macro. ROC-AUC solo con scores continuos válidos y ambas clases; PR/AP solo si desbalance real observado en desarrollo justificó su uso.
+- [x] Analizar FP/FN y aciertos; interpretar al elegido mediante coeficientes HOG de SVM o importancia RF. Permutación solo si aporta claridad sobre desarrollo, declarando sus límites. No SHAP ni mapas clínicos.
+- [x] Aplicar McNemar solo con predicciones individuales de C1/C2 sobre mismas imágenes y unidades razonablemente independientes. Reportar b/c, n, diferencia y p; si no corresponde, justificar. No Wilcoxon, 5×2cv ni bootstrap inferencial.
+- [x] Informar tiempos aproximados de extracción, búsqueda/ajuste e inferencia, tamaño y complejidad; RAM opcional fácil. Contrastar contextualmente con referencia CNN y registrar diferencias de datos/split/hardware.
+- [x] Verificar métricas desde predicciones ya guardadas sin reabrir experimentos, actualizar checklist y registros y dejar el diff local para revisión. Commit y push requieren solicitud expresa.
 
 # Archivos a crear/modificar
 
-Completar `src/evaluation.py` y configuración; guardar `results/tuning_cv.csv`, `results/predicciones_test.csv`, `results/metricas_test.csv`, `reports/evaluacion.md` y figuras. Registrar selección previa en `docs/REGISTRO_EJECUCION.md`. Guardar modelo final local y su identificación/tamaño; no publicar binarios pesados ni datos sensibles.
+[Búsqueda por configuración](../../results/tuning_cv.csv), [registro previo](../../results/seleccion_pretest.json), [métricas reservadas](../../results/metricas_test.csv) e [informe](../../reports/evaluacion.md) con figuras. Las predicciones por ID, el modelo elegido y su registro de ejecución quedan en `data/processed/sprint_04_test/`, fuera de Git.
 
 # Pruebas
 
@@ -41,11 +41,11 @@ Modelo seleccionado, evaluación final trazable, contraste histórico prudente, 
 
 # Criterios de aceptación
 
-- [ ] Búsqueda restringida y decisión registrada antes de test, con código/configuración identificables.
-- [ ] Test evaluado una vez en lote predefinido; ganador no cambiado después.
-- [ ] Métricas/matrices y FP/FN verificados; explicación del elegido con límites.
-- [ ] McNemar válido o motivo explícito de omisión; no se agrega otro plan estadístico.
-- [ ] Costos simples y comparación contextual documentados; commit y push confirmados.
+- [x] Búsqueda restringida y decisión registrada antes de test, con código/configuración identificables.
+- [x] Test evaluado una vez en lote predefinido; ganador no cambiado después.
+- [x] Métricas/matrices y FP/FN verificados; explicación del elegido con límites.
+- [x] McNemar válido o motivo explícito de omisión; no se agrega otro plan estadístico.
+- [x] Costos simples, comparación contextual, pruebas y diff local verificados.
 
 # Qué debemos saber explicar
 
@@ -62,21 +62,30 @@ Por qué selección y test tienen funciones distintas, qué significa mejor CV, 
 7. ¿Qué limitan los coeficientes HOG o las importancias RF?
 8. ¿Qué incluye el tiempo de inferencia informado?
 
-# Prompt para Codex
+# Reproducción interna
 
-```text
-Ejecutá únicamente SPRINT_04_TUNING_EVALUACION según su plan vigente. Leé primero README.md,
-docs/ROADMAP_TFI.md, docs/TEORIA_Y_STACK.md, docs/COMPARATIVA_TFC_VS_PROPUESTA.md,
-docs/FUENTES_Y_TRAZABILIDAD.md, docs/ejecucion/README.md y el registro de ejecución
-si existe; inspeccioná Git y las instrucciones aplicables. Verificá evidencia de cierre del sprint 03; no lo des por completo por existir un plan.
-Conservá HOG fijo, B0 DummyClassifier, C1 SVM lineal con StandardScaler y C2 RF.
-Respetá límites, entradas y orden de tareas de este sprint; los planes archivados
-no son instrucciones activas. No añadas candidatos, descriptores, infraestructura
-ni experimentos opcionales. Ejecutá las pruebas pertinentes y registrá evidencia
-real, decisiones, limitaciones y uso de IA. Si falta intervención humana necesaria,
-no la inventes: explicá el pendiente y avanzá solo en tareas independientes.
-Actualizá documentación, checklist y estado según lo realmente completado.
-Revisá el diff, hacé un commit coherente y push al remoto/rama del proyecto,
-confirmá el resultado y reportá SHA, verificaciones y pendientes.
-No ejecutes ni inicies el siguiente sprint.
+Desde la raíz, con el entorno fijado en `requirements.txt`, verificar el cierre de 03. Esta verificación incluye el manifiesto, HOG, índice y predicciones de Dummy. Si faltan artefactos, seguir el procedimiento del sprint correspondiente.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.comparacion --config configs/experimento.json --output data/processed/sprint_03 --verify-only
+.\.venv\Scripts\python.exe -m src.tuning --config configs/experimento.json --output data/processed/sprint_04_svm --candidate linear_svm
+.\.venv\Scripts\python.exe -m src.tuning --config configs/experimento.json --output data/processed/sprint_04_rf --candidate random_forest
+.\.venv\Scripts\python.exe -m src.tuning --config configs/experimento.json --output data/processed/sprint_04_busqueda --merge-from data/processed/sprint_04_svm data/processed/sprint_04_rf
+Copy-Item -LiteralPath data/processed/sprint_04_busqueda/tuning_cv.csv -Destination results/tuning_cv.csv
+.\.venv\Scripts\python.exe -m src.final --config configs/experimento.json --selection results/seleccion_pretest.json --freeze-from data/processed/sprint_04_busqueda
 ```
+
+El último comando registra la selección y los hashes del código, configuración y artefactos antes de leer imágenes reservadas. La prueba del flujo usa imágenes sintéticas.
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+El siguiente comando corresponde a la única ejecución del lote reservado. Con predicciones existentes, usar el comando de análisis para reconstruir métricas y figuras sin abrir el ZIP ni reajustar.
+
+```powershell
+.\.venv\Scripts\python.exe -m src.final --config configs/experimento.json --selection results/seleccion_pretest.json --evaluate-to data/processed/sprint_04_test
+.\.venv\Scripts\python.exe -m src.analisis_final --config configs/experimento.json --selection results/seleccion_pretest.json --evaluation data/processed/sprint_04_test --results results/metricas_test.csv --figures reports/evaluacion
+```
+
+La evidencia de búsqueda en `data/processed/sprint_04_busqueda/tuning.json` conserva los avisos y tiempos por candidato. El registro de ejecución reservada incluye sus hashes, los tiempos y el identificador del modelo.

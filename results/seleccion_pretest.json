@@ -1,0 +1,141 @@
+{
+  "frozen_at_utc": "2026-11-08T20:20:25.122466+00:00",
+  "git_base": "f315c055b3f176a564776afa9c19a6584fef9e89",
+  "code_sha256": {
+    "src/final.py": "5ff61354bbc1fd2898f0489faf454b096a8205c6d9cddf2cc5494946804d9fef",
+    "src/tuning.py": "0003f88a35eeb8f63c5b3604a99a4bb8bbf636b1564f9a4efa5e7a5de26aa446",
+    "src/features.py": "2e675348f152fa154210e92acbd3b27b8b07014db07e31aaddfa8aa99347bba1",
+    "src/models.py": "74cc4e3e87b3a82f397f9c33ee7fd941b10c270b61f177359fcb193ef736a154",
+    "src/baseline.py": "bc0b74c21327c8d1dd8f78a4cfa46a202a7bd583364933ae1645959c1ca68611",
+    "src/comparacion.py": "11808a8fe58515d308aa0f8a28a320887fee4577fe5b14154f7d25b76537f671",
+    "src/data.py": "f40d7a1525289b6c7a3a71813a397e1bd5d641e5002f6b939f1421c891258812",
+    "src/evaluation.py": "8e5bc355586d7e9d2987003cadd0a441359f92684eca1d415304167a83d94132",
+    "src/analisis_final.py": "99d9f91a79c87abbc71b13d3f2e15287d1c5b96e5d77d411df089a55345c3439",
+    "requirements.txt": "8dbd97c5b3edb0d84c504c68197fc6d7b8eeff066ba3af3b356595a9c841afbd"
+  },
+  "config_sha256": "c0b2641f97967ada05dca754381ced880a82d0efc26983824dee89fa8c528d31",
+  "versions": {
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1",
+    "scikit-image": "0.26.0",
+    "pillow": "13.0.0",
+    "joblib": "1.6.0"
+  },
+  "manifest_sha256": "262e251fcfbe4c370a613f987725306d6fb4f5e735a15bcce49cdb2fb352707d",
+  "development_artifact_sha256": {
+    "hog.npy": "f808c8c28bf59fc6b71cbc2ec9139280e3f5a78920d2bcac11970e3e4998df1b",
+    "index.csv": "14272b3516ced9f050bb4952a84fa5f2c7c0c3498ac149aaef27c5a29353d6fd",
+    "predictions_oof.csv": "355d6f614a51599c2f95392419b95d3cbb0f102117baa7745d9263a0aed32927",
+    "baseline_cv.csv": "9333bf81642c12a09ab47f898dcd40e67a892a6be3c537736f6f26f39155cff8"
+  },
+  "tuning_cv_sha256": "1c4bb588f9fda8c7e55322509aaf926034da073ce994bd43f7883e68fd1024e9",
+  "best": {
+    "linear_svm": {
+      "parameters": {
+        "svm__C": 0.1
+      },
+      "configuration": 1,
+      "mean_f1_macro": 0.875984330648558
+    },
+    "random_forest": {
+      "parameters": {
+        "max_depth": null,
+        "min_samples_leaf": 1,
+        "n_estimators": 200
+      },
+      "configuration": 5,
+      "mean_f1_macro": 0.7983447031926072
+    }
+  },
+  "selected": "linear_svm",
+  "selection_metric": "mean_f1_macro",
+  "tie": "linear_svm; first configuration within each grid",
+  "batch": [
+    "dummy",
+    "random_forest",
+    "linear_svm"
+  ],
+  "settings": {
+    "dummy": {
+      "constant": null,
+      "random_state": null,
+      "strategy": "most_frequent"
+    },
+    "random_forest": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "class_weight": null,
+      "criterion": "gini",
+      "max_depth": null,
+      "max_features": "sqrt",
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 1,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 200,
+      "n_jobs": -1,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "linear_svm": {
+      "scaler": {
+        "copy": true,
+        "with_mean": true,
+        "with_std": true
+      },
+      "estimator": {
+        "C": 0.1,
+        "class_weight": null,
+        "dual": false,
+        "fit_intercept": true,
+        "intercept_scaling": 1,
+        "loss": "squared_hinge",
+        "max_iter": 10000,
+        "multi_class": "ovr",
+        "penalty": "l2",
+        "random_state": 42,
+        "tol": 0.0001,
+        "verbose": 0
+      },
+      "solver": "liblinear primal"
+    }
+  },
+  "thresholds_strictly_greater_than": {
+    "random_forest": 0.5,
+    "linear_svm": 0.0
+  },
+  "covid_scores": {
+    "random_forest": "predict_proba[:, class=1]",
+    "linear_svm": "decision_function"
+  },
+  "positive_label": 1,
+  "zero_division": 0,
+  "metrics": [
+    "accuracy",
+    "precision_covid",
+    "recall_covid",
+    "specificity",
+    "f1_normal",
+    "f1_covid",
+    "f1_macro",
+    "roc_auc",
+    "average_precision"
+  ],
+  "development_positive_rate": 0.25942410754836953,
+  "development_rows": 11009,
+  "test_rows": 2752,
+  "mcnemar": {
+    "comparison": [
+      "linear_svm",
+      "random_forest"
+    ],
+    "two_sided_alpha": 0.05,
+    "condition": "independent paired units"
+  }
+}

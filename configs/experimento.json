@@ -8,6 +8,7 @@
   "development_manifest": "data/processed/sprint_01/manifiesto.csv",
   "development_manifest_sha256": "262e251fcfbe4c370a613f987725306d6fb4f5e735a15bcce49cdb2fb352707d",
   "development_rows": 11009,
+  "test_rows": 2752,
   "sprint_02_artifacts": "data/processed/sprint_02",
   "seed": 42,
   "test_fraction": 0.2,

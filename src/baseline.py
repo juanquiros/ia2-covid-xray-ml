@@ -3,19 +3,18 @@
 import argparse
 import json
 import platform
-from hashlib import file_digest, sha256
+from hashlib import file_digest
 from importlib.metadata import version
-from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import perf_counter
-from zipfile import BadZipFile, ZipFile
+from zipfile import BadZipFile
 
 import numpy as np
 
-from .data import csv_rows, read_image, write_csv
+from .data import csv_rows, write_csv
 from .evaluation import score_oof
-from .features import HOG_CONFIG, IMAGE_SHAPE, N_FEATURES, extract_hog
+from .features import HOG_CONFIG, IMAGE_SHAPE, N_FEATURES, extract_manifest_hog
 from .models import make_baseline
 
 
@@ -52,17 +51,6 @@ def development_inputs(config):
         if set(labels[folds == fold]) != {0, 1} or set(labels[folds != fold]) != {0, 1}:
             raise ValueError(f"Falta alguna clase en entrenamiento o validación del fold {fold}.")
     return development, index, labels, folds
-
-
-def extract_development(archive, development):
-    matrix = np.empty((len(development), N_FEATURES), dtype=np.float32)
-    with ZipFile(archive) as zipped:
-        for i, row in enumerate(development):
-            content = zipped.read(row["path"])
-            if sha256(content).hexdigest() != row["sha256"]:
-                raise ValueError(f"El contenido de desarrollo difiere del manifiesto: {row['id']}.")
-            matrix[i] = extract_hog(read_image(BytesIO(content)))
-    return matrix
 
 
 def predict_oof(labels, folds):
@@ -106,7 +94,7 @@ def run(config, output):
         raise ValueError("La carpeta de salida ya existe. Elegir otra ruta para preservar la ejecución.")
     development, index, labels, folds = development_inputs(config)
     start = perf_counter()
-    matrix = extract_development(config["archive"], development)
+    matrix = extract_manifest_hog(config["archive"], development)
     elapsed = perf_counter() - start
     predictions = predict_oof(labels, folds)
     records, summary = score_oof(labels, folds, predictions)

@@ -1,9 +1,15 @@
 """Contrato único de preprocesamiento y HOG, sin ajuste estadístico global."""
 
+from hashlib import sha256
+from io import BytesIO
+from zipfile import ZipFile
+
 import numpy as np
 from skimage.color import rgb2gray
 from skimage.feature import hog
 from skimage.transform import resize
+
+from .data import read_image
 
 IMAGE_SHAPE = (128, 128)
 N_FEATURES = 8100
@@ -45,3 +51,15 @@ def extract_hog(image, *, visualize=False):
         raise ValueError("HOG debe producir 8100 características finitas.")
     vector = vector.astype(np.float32)
     return (vector, result[1]) if visualize else vector
+
+
+def extract_manifest_hog(archive, rows):
+    """Lee únicamente las rutas suministradas, en el orden del manifiesto."""
+    matrix = np.empty((len(rows), N_FEATURES), dtype=np.float32)
+    with ZipFile(archive) as zipped:
+        for i, row in enumerate(rows):
+            content = zipped.read(row["path"])
+            if sha256(content).hexdigest() != row["sha256"]:
+                raise ValueError(f"El contenido difiere del manifiesto: {row['id']}.")
+            matrix[i] = extract_hog(read_image(BytesIO(content)))
+    return matrix

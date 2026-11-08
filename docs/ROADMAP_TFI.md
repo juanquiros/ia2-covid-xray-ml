@@ -274,7 +274,7 @@ Discutir privacidad, licencia, sesgo de fuente/población, FP/FN y uso indebido 
 | 01 Datos y EDA | Datos autorizados, auditoría, manifiesto/split, EDA y entorno | Cerrado el 08/11/2026 |
 | 02 HOG y baseline | HOG fijo probado y B0 evaluada en desarrollo | Cerrado el 08/11/2026 |
 | 03 Modelos y CV | C1/C2 iniciales comparados con B0 en folds comunes | Cerrado el 08/11/2026 |
-| 04 Tuning y evaluación | Selección, registro previo, test único, errores e interpretación | No iniciado |
+| 04 Tuning y evaluación | Selección, registro previo, test único, errores e interpretación | Cerrado el 08/11/2026 |
 | 05 Informe y defensa | Informe, comparación, ética, despliegue conceptual y ensayo | No iniciado |
 
 Planes y prompts en [Ejecución](ejecucion/README.md). Los nueve planes anteriores son [historial archivado](archivo/planificacion_inicial/README.md). La revisión de Juan Quirós y Andruszyszyn consta en el [registro de ejecución](REGISTRO_EJECUCION.md). Cada sprint futuro exige su solicitud y el cierre verificable del anterior.

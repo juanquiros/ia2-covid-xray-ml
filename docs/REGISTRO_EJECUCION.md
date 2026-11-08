@@ -1,5 +1,17 @@
 # Registro de ejecución
 
+## 04 · Ajuste y evaluación final · 08/11/2026
+
+**Registro previo a prueba:** a las 17:20:25 (UTC−3) se fijó SVM lineal con C=0,1 por su F1 macro medio de 0,875984 en desarrollo. El bosque del lote quedó fijado en 200 árboles, profundidad sin límite y hoja mínima 1, con F1 macro medio de 0,798345. El lote incluye Dummy y ambos candidatos. El [registro previo](../results/seleccion_pretest.json) conserva los parámetros, umbrales, métricas, SHA-256 del manifiesto, versión del entorno y hashes del código local sobre la base `f315c05`. SHA-256 del registro `421de5533435017599ea06bcbda7b1071283ea641650fefe05243e4a49a42437`. Las imágenes reservadas aún no se habían abierto.
+
+**Búsqueda:** se verificó el cierre de 03 y se ejecutó GridSearchCV con los cinco folds de desarrollo. Una primera ejecución se interrumpió por el costo observado en SVM con C=0,1. El diagnóstico sobre desarrollo confirmó que ese ajuste requería más iteraciones que C=1. La búsqueda completa se ejecutó por candidato con la misma grilla, datos, tolerancia y solver. Se consolidaron las 11 configuraciones y se recalcularon media y desvío muestral. Los 55 ajustes válidos no registraron avisos. Pasaron las 25 pruebas antes de abrir el conjunto reservado, incluido un lote completo con datos sintéticos.
+
+**Estado:** cerrado el 08/11/2026. El lote reservado comenzó a las 17:31:52 y se guardó a las 17:32:14 (UTC−3), después del registro de selección. Los tres modelos se reajustaron con desarrollo completo. El SVM seleccionado terminó en 788 iteraciones, sin avisos. Se comprobó la carga del modelo con ejemplos de desarrollo antes de abrir las imágenes de prueba. SHA-256 del modelo local `8f603704aa8bdb6b81cf4c1bc1510f2d91d4a57e8ce688ed06dbc366498aa4c5` (247554 bytes).
+
+**Evaluación y verificación:** una predicción por cada uno de los 2.752 IDs reservados y por modelo. SVM lineal obtuvo F1 macro 0,871946, exactitud 0,899346, ROC-AUC 0,951055 y AP 0,890350. No se cambió la selección. Se omitió McNemar por falta de identificadores fiables de pacientes. Las matrices y el recálculo independiente de métricas, incluidos ROC-AUC y AP, se hicieron desde las predicciones guardadas, sin volver a abrir el ZIP. Se verificaron las tres figuras, enlaces, hashes y `git diff --check`. [Informe de evaluación](../reports/evaluacion.md)
+
+**Artefactos locales:** `data/processed/sprint_04_test/` contiene las predicciones por ID, el registro temporal del lote y el modelo elegido. SHA-256 de las predicciones `2e9d2ecfb4e63e1528360f507760fd583654fabf0dbf9c018b72977d99ad0a50`. Los resultados agregados, el registro previo y la búsqueda se conservan en `results/`. [Guía interna](ejecucion/SPRINT_04_TUNING_EVALUACION.md#reproducción-interna)
+
 ## 03 · Random Forest y SVM lineal en validación cruzada · 08/11/2026
 
 **Estado:** cerrado con los cinco folds de los tres modelos verificados. El punto de partida fue `main` en `acbf70c`, coincidente con `origin/main`. Pasó `src.baseline --verify-only` para HOG, índice, métricas y predicciones de Dummy. Se conservaron las 11.009 imágenes de desarrollo, los 8.100 atributos y el fold de cada imagen.
