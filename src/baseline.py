@@ -12,10 +12,9 @@ from time import perf_counter
 from zipfile import BadZipFile, ZipFile
 
 import numpy as np
-from sklearn.metrics import recall_score
 
 from .data import csv_rows, read_image, write_csv
-from .evaluation import metrics
+from .evaluation import score_oof
 from .features import HOG_CONFIG, IMAGE_SHAPE, N_FEATURES, extract_hog
 from .models import make_baseline
 
@@ -75,21 +74,6 @@ def predict_oof(labels, folds):
         model = make_baseline().fit(placeholders[~valid], labels[~valid])
         predictions[valid] = model.predict(placeholders[valid])
     return predictions
-
-
-def score_oof(labels, folds, predictions):
-    records = []
-    for fold in np.unique(folds):
-        valid = folds == fold
-        y, pred = labels[valid], predictions[valid]
-        records.append(dict(fold=int(fold), n_validation=len(y), n_covid=int(y.sum()),
-                            n_predicted_covid=int(pred.sum()), **metrics(y, pred),
-                            specificity=float(recall_score(y, pred, pos_label=0, zero_division=0))))
-    summary = {}
-    for key in ("accuracy", "precision", "recall", "f1", "specificity", "f1_macro"):
-        values = [row[key] for row in records]
-        summary[key] = {"mean": float(np.mean(values)), "std": float(np.std(values, ddof=1))}
-    return records, summary
 
 
 def verify(config, output):

@@ -1,5 +1,15 @@
 # Registro de ejecución
 
+## 03 · Random Forest y SVM lineal en validación cruzada · 08/11/2026
+
+**Estado:** cerrado con los cinco folds de los tres modelos verificados. El punto de partida fue `main` en `acbf70c`, coincidente con `origin/main`. Pasó `src.baseline --verify-only` para HOG, índice, métricas y predicciones de Dummy. Se conservaron las 11.009 imágenes de desarrollo, los 8.100 atributos y el fold de cada imagen.
+
+**Ajuste:** se usó una instancia nueva de cada candidato por fold. Se comprobó el número de filas y las medias del escalador contra el entrenamiento de cada fold. SVM usó liblinear primal (`dual=False`), tolerancia `1e-4` y máximo de 10.000 iteraciones. Terminó en 20, 19, 19, 24 y 19 iteraciones, sin avisos de convergencia.
+
+**Resultados:** F1 macro medio y desvío muestral de 0,425478 ± 0,000065 para Dummy, 0,795500 ± 0,009817 para Random Forest y 0,870162 ± 0,004566 para SVM lineal. Se reutilizaron las predicciones de Dummy del Sprint 02 y se hizo una réplica idéntica para medir tiempos. El [informe del Sprint 03](../reports/modelos_cv.md) registra métricas, tiempos y límites. La independencia por paciente queda sin verificar porque faltan identificadores fiables. La selección final corresponde al Sprint 04.
+
+**Verificación:** se cotejaron 33.027 predicciones OOF y se recalcularon los 15 resultados desde las confusiones por fold. Los IDs y folds coinciden con el manifiesto y no contienen IDs de test. Pasaron las 24 pruebas, `pip check` y `git diff --check`. Los artefactos por imagen y el resumen quedaron en `data/processed/sprint_03/`. [Comandos internos](ejecucion/SPRINT_03_MODELOS_CV.md#reproducción-interna)
+
 ## 02 · HOG y línea base en desarrollo · 08/11/2026
 
 **Estado:** cerrado con matriz, índice y cinco resultados de Dummy verificados. Se partió de `main` en `55315df`, coincidente con `origin/main`. El SHA-256 del manifiesto de 01 coincide con el registrado y se conservaron las imágenes y sus folds.

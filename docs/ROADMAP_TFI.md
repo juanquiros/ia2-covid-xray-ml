@@ -273,7 +273,7 @@ Discutir privacidad, licencia, sesgo de fuente/población, FP/FN y uso indebido 
 | 00 Análisis TFC | Revisión por integrantes, alcance y trazabilidad aceptados | Cerrado el 05/11/2026 |
 | 01 Datos y EDA | Datos autorizados, auditoría, manifiesto/split, EDA y entorno | Cerrado el 08/11/2026 |
 | 02 HOG y baseline | HOG fijo probado y B0 evaluada en desarrollo | Cerrado el 08/11/2026 |
-| 03 Modelos y CV | C1/C2 iniciales comparados con B0 en folds comunes | No iniciado |
+| 03 Modelos y CV | C1/C2 iniciales comparados con B0 en folds comunes | Cerrado el 08/11/2026 |
 | 04 Tuning y evaluación | Selección, registro previo, test único, errores e interpretación | No iniciado |
 | 05 Informe y defensa | Informe, comparación, ética, despliegue conceptual y ensayo | No iniciado |
 
